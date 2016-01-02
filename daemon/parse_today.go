@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"encoding/xml"
+	"io/ioutil"
 	"log"
 	"time"
-	"io/ioutil"
-	"encoding/xml"
-	"encoding/json"
 )
 
 func ParseToday() {
@@ -47,7 +47,7 @@ func ParseToday() {
 		return
 	}
 
-	const layout = "01"   // Month
+	const layout = "1"    // Month
 	const clock = "15:04" // Clock
 
 	today := Date{}
@@ -55,7 +55,7 @@ func ParseToday() {
 	t := time.Now()
 
 	for _, v := range r.Date {
-        
+
 		if v.Day == t.Day() && t.Format(layout) == v.Month && v.Year == t.Year() {
 
 			today = v
@@ -85,6 +85,6 @@ func ParseToday() {
 		log.Println(err)
 		return
 	}
-	
+
 	log.Println("Finished parsing today")
 }
