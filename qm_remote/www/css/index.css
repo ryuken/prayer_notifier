@@ -1,0 +1,41 @@
+#core_scaffold {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+}
+
+#core_header_panel {
+	background-color: rgb(255, 255, 255);
+}
+
+#core_toolbar {
+	color: rgb(255, 255, 255);
+	background-color: rgb(79, 125, 201);
+}
+
+#core_menu {
+	font-size: 16px;
+}
+
+#core_card {
+	width: 96%;
+	height: 300px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
+	box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
+	margin: 2%;
+	background-color: rgb(255, 255, 255);
+	text-align: left;
+}
+
+#core_card:first-child {
+	padding: 20px;
+}
+
+core-pages {
+	width: 100%;
+}

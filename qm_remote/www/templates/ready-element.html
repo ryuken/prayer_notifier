@@ -1,0 +1,119 @@
+<link rel="import" href="../components/polymer/polymer.html">
+<link rel="import" href="../components/core-icon/core-icon.html">
+<link rel="import" href="../components/core-icons/av-icons.html">
+<link rel="import" href="../components/paper-slider/paper-slider.html">
+<link rel="import" href="../components/x-websocket/dist/x-websocket.html">
+
+<polymer-element name="ready-element">
+	<template>
+		<x-websocket id="sock"></x-websocket>
+		<div id="status">{{ status }}</div>
+		<core-icon icon="{{ state }}"></core-icon>
+		<core-icon icon="{{ volume }}"></core-icon>
+		<div id="progress">
+			<h2>{{ current_song.title }}</h2> {{ current_song.elapsed }} / {{ current_song.duration }}
+		</div>
+		<paper-slider min="0" max="100" value="{{ current_song.progress }}"></paper-slider>
+	</template>
+	<script>
+		var mpd = {};
+
+		Polymer('ready-element', {
+			ready: function () {
+
+				var that = this;
+
+				that.status = "Disconnected";
+				that.volume = "";
+				that.queue = {};
+
+				var last_state;
+				var current_app;
+				var pagination = 0;
+				var browsepath;
+				var lastSongTitle = "";
+				var current_song = {};
+
+				document.addEventListener('deviceready', function () {
+
+					onDeviceReady();
+
+					var check = setInterval(function () {
+						if (null != found_url) {
+							clearInterval(check);
+
+							var ip = found_url.match(/^http:\/\/(\d+\.\d+\.\d+\.\d+)/)[1];
+
+							console.log("found: " + ip);
+
+							var xws = that.$.sock;
+
+							xws.url = "ws://" + ip + ":8080//ws";
+							console.log("url:", xws.url);
+
+							xws.addEventListener("open", function () {
+								that.status = "Connected";
+							});
+
+							xws.addEventListener("message", function (event) {
+
+								if (event.detail.data === last_state || event.detail.data.length == 0)
+									return;
+
+								var obj = JSON.parse(event.detail.data);
+
+								switch (obj.type) {
+								case "queue":
+									that.queue = {};
+									for (var song in obj.data) {
+										var minutes = Math.floor(obj.data[song].duration / 60);
+										var seconds = obj.data[song].duration - minutes * 60;
+
+										that.queue[obj.data[song].id] = {
+											title: obj.data[song].title,
+											pos: (obj.data[song].pos + 1),
+											duration: minutes + ":" + (seconds < 10 ? '0' : '') + seconds,
+											elapsed: "0:00",
+											progress : 0
+										};
+									}
+									break;
+								case "disconnected":
+									console.log("disconnected");
+									break;
+								case "update_queue":
+									xws.send('MPD_API_GET_QUEUE,' + pagination);
+									break;
+								case "error":
+									console.log(obj.data);
+								case "state":
+									that.state = obj.data.state;
+									that.state = that.state === 1 ? "av:stop" : (that.state === 2 ? "av:play-arrow" : "av:pause");
+
+									that.volume = obj.data.volume;
+									that.volume = that.volume === 0 ? "av:volume-mute" : (that.volume < 50 ? "av:volume-down" : "av:volume-up");
+
+									var elapsed_minutes = Math.floor(obj.data.elapsedTime / 60);
+									var elapsed_seconds = obj.data.elapsedTime - elapsed_minutes * 60;
+									elapsed_seconds = elapsed_seconds < 10 ? ("0" + elapsed_seconds) : elapsed_seconds;
+
+									that.current_song = that.queue[obj.data.currentsongid];
+									
+									if("undefined" !== typeof that.current_song)
+									{
+										that.current_song.progress = Math.floor(100 * obj.data.elapsedTime / obj.data.totalTime);
+										that.current_song.elapsed = elapsed_minutes + ":" + elapsed_seconds;
+									}
+
+								default:
+									break;
+								}
+							});
+						}
+					}, 100);
+
+				}, false);
+			}
+		});
+	</script>
+</polymer-element>
