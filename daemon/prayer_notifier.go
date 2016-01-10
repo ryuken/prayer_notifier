@@ -12,10 +12,13 @@ import (
 	"regexp"
 	"time"
 
+	"gopkg.in/fsnotify.v1"
+
 	tools "th_tools"
 
 	"github.com/robfig/cron"
 	"github.com/rs/cors"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -58,6 +61,21 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.SetConfigType("json")
+
+	err = viper.ReadInConfig() // Find and read the config file
+	if err != nil {            // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	}
+
+	viper.WatchConfig()
+
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
 
 	const clock = "15:04" // Clock
 
@@ -183,24 +201,56 @@ func main() {
 			}
 		}
 
+		enabled := viper.GetStringSlice("enabled")
+
 		if currentTime == today.Fajr {
 			fmt.Println("It's Fajr!")
-			// DISABLE TEMP play("mpc", "play", "1")
+
+			for _, prayer := range enabled {
+				if "Fajr" == prayer {
+					play("mpc", "play", "1")
+					break
+				}
+			}
 		} else if currentTime == today.Sunrise {
 			fmt.Println("It's Sunrise!")
 			play("mpc", "play", "2")
 		} else if currentTime == today.Dhuhr {
 			fmt.Println("It's Dhuhr!")
-			play("mpc", "play", "1")
+
+			for _, prayer := range enabled {
+				if "Dhuhr" == prayer {
+					play("mpc", "play", "1")
+					break
+				}
+			}
 		} else if currentTime == today.Asr {
 			fmt.Println("It's Asr!")
-			// DISABLE TEMP play("mpc", "play", "1")
+
+			for _, prayer := range enabled {
+				if "Asr" == prayer {
+					play("mpc", "play", "1")
+					break
+				}
+			}
 		} else if currentTime == today.Maghrib {
 			fmt.Println("It's Maghrib!")
-			play("mpc", "play", "1")
+
+			for _, prayer := range enabled {
+				if "Maghrib" == prayer {
+					play("mpc", "play", "1")
+					break
+				}
+			}
 		} else if currentTime == today.Isha {
 			fmt.Println("It's Isha!")
-			play("mpc", "play", "1")
+
+			for _, prayer := range enabled {
+				if "Isha" == prayer {
+					play("mpc", "play", "1")
+					break
+				}
+			}
 		} else {
 			//fmt.Println(currentTime, "nothing to do...")
 		}
