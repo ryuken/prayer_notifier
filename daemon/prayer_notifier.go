@@ -1,21 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"time"
 	"bytes"
-	"regexp"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
 	"os/exec"
-	"net/http"
-	"io/ioutil"
-	"encoding/json"
+	"regexp"
+	"time"
 
 	tools "th_tools"
-	
-	"github.com/rs/cors"
+
 	"github.com/robfig/cron"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	defer logFile.Close()
 
 	log.SetOutput(logFile)
-	
+
 	type Date struct {
 		Day     int    `xml:"day,attr"`
 		Month   string `xml:"month,attr"`
@@ -41,17 +41,17 @@ func main() {
 		Maghrib string `xml:"maghrib"`
 		Isha    string `xml:"isha"`
 	}
-	
+
 	today := Date{}
-	
+
 	loadToday := func() {
-		
+
 		content, err := ioutil.ReadFile("today.json")
 
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		err = json.Unmarshal(content, &today)
 
 		if err != nil {
@@ -78,9 +78,8 @@ func main() {
 
 			var status []string
 
-			fmt.Println(out.String())
-
-			fmt.Println("Current playlist is not azan.playlist")
+			//fmt.Println(out.String())
+			//fmt.Println("Current playlist is not azan.playlist")
 
 			// get current playing status
 			cmd = exec.Command("mpc", "status")
@@ -90,10 +89,10 @@ func main() {
 				fmt.Println(err)
 			}
 			// Print status
-            re := regexp.MustCompile(`\[(\w+)\] #(\d+)/(\w+)\s+(\w+:\w+)/(\w+:\w+)`)
+			re := regexp.MustCompile(`\[(\w+)\] #(\d+)/(\w+)\s+(\w+:\w+)/(\w+:\w+)`)
 			//fmt.Printf("%q\n", re.FindStringSubmatch("[playing] #1/1 0:05/27:02"))
 			status = re.FindStringSubmatch(fmt.Sprintf("%q\n", out.String()))
-			fmt.Println(status)
+			//fmt.Println(status)
 
 			if len(status) > 0 {
 				// remove temporary playlist
@@ -102,7 +101,7 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Removed temporary playlist")
+				//fmt.Println("Removed temporary playlist")
 
 				// save playlist as temporary playlist
 				cmd = exec.Command("mpc", "save", "temp.playlist")
@@ -111,7 +110,7 @@ func main() {
 					fmt.Println(err)
 				}
 
-				fmt.Println("Saved current playlist to temp.playlist")
+				//fmt.Println("Saved current playlist to temp.playlist")
 
 				// clear current playlist
 				cmd = exec.Command("mpc", "clear")
@@ -119,7 +118,7 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Cleared playlist")
+				//fmt.Println("Cleared playlist")
 			}
 
 			// load azan playlist
@@ -129,7 +128,7 @@ func main() {
 				fmt.Println(err)
 			}
 
-			fmt.Println("Loaded azan.playlist")
+			//fmt.Println("Loaded azan.playlist")
 
 			cmd = exec.Command(player, action, id)
 			err = cmd.Run()
@@ -137,7 +136,7 @@ func main() {
 				fmt.Println(err)
 			}
 
-			fmt.Println("playing first from playlist and sleeping 3:21 mintues")
+			//fmt.Println("playing first from playlist and sleeping 3:21 mintues")
 
 			time.Sleep(3*time.Minute + 21*time.Second)
 
@@ -147,7 +146,7 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println("Stopped playing azan")
+			//fmt.Println("Stopped playing azan")
 
 			// clear temporary playlist
 			cmd = exec.Command("mpc", "clear")
@@ -155,7 +154,7 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println("Cleared playlist")
+			//fmt.Println("Cleared playlist")
 
 			if len(status) > 0 {
 				// load temp playlist
@@ -164,7 +163,7 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Loaded temp.playlist again")
+				//fmt.Println("Loaded temp.playlist again")
 
 				// resume  playlist
 				cmd = exec.Command("mpc", "play", status[2])
@@ -172,7 +171,7 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Resumed original playlist")
+				//fmt.Println("Resumed original playlist")
 
 				// seek to original position
 				cmd = exec.Command("mpc", "seek", status[4])
@@ -180,7 +179,7 @@ func main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Seeked to original position")
+				//fmt.Println("Seeked to original position")
 			}
 		}
 
@@ -195,7 +194,7 @@ func main() {
 			play("mpc", "play", "1")
 		} else if currentTime == today.Asr {
 			fmt.Println("It's Asr!")
-			play("mpc", "play", "1")
+			// DISABLE TEMP play("mpc", "play", "1")
 		} else if currentTime == today.Maghrib {
 			fmt.Println("It's Maghrib!")
 			play("mpc", "play", "1")
@@ -203,16 +202,16 @@ func main() {
 			fmt.Println("It's Isha!")
 			play("mpc", "play", "1")
 		} else {
-			fmt.Println(currentTime, "nothing to do...")
+			//fmt.Println(currentTime, "nothing to do...")
 		}
 	}
-	
+
 	fmt.Println("started at", time.Now())
-	
+
 	Download()
 	ParseToday()
 	loadToday()
-	
+
 	fmt.Println(today)
 
 	daemon := cron.New()
@@ -221,22 +220,22 @@ func main() {
 	daemon.AddFunc("@every 12h", loadToday)
 	daemon.AddFunc("@every 1m", check)
 	daemon.Start()
-	
+
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"GET", "POST"},
 	})
-	
+
 	ht := tools.HttpTool{}
 	ht.Init()
-	
+
 	ht.Get("/today", c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "today.json")
 	})))
-	
+
 	ht.Get("/qm", c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("xDGJGDx"))
 	})))
-	
+
 	ht.Route(logFile, "3000")
 }
