@@ -47,7 +47,7 @@ func ParseToday() {
 		return
 	}
 
-	const layout = "1"    // Month
+	const layout = "01"    // Month
 	const clock = "15:04" // Clock
 
 	today := Date{}
@@ -64,7 +64,7 @@ func ParseToday() {
 			today.City = r.City
 			today.Fajr = ConvertTo24(v.Fajr, "AM")
 			today.Sunrise = ConvertTo24(v.Sunrise, "AM")
-			today.Dhuhr = ConvertTo24(v.Dhuhr, "PM")
+			today.Dhuhr = ConvertTo24(v.Dhuhr, "AM")
 			today.Asr = ConvertTo24(v.Asr, "PM")
 			today.Maghrib = ConvertTo24(v.Maghrib, "PM")
 			today.Isha = ConvertTo24(v.Isha, "PM")
@@ -72,6 +72,8 @@ func ParseToday() {
 			break
 		}
 	}
+
+	log.Println(today)
 
 	output, err := json.MarshalIndent(today, "", "\t")
 	if err != nil {

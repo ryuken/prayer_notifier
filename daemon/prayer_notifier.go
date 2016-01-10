@@ -186,7 +186,7 @@ func main() {
 
 		if currentTime == today.Fajr {
 			fmt.Println("It's Fajr!")
-			play("mpc", "play", "1")
+			// DISABLE TEMP play("mpc", "play", "1")
 		} else if currentTime == today.Sunrise {
 			fmt.Println("It's Sunrise!")
 			play("mpc", "play", "2")
