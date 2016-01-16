@@ -2,7 +2,7 @@ default:
 	GOOS=darwin go build -ldflags "-s"
 
 pi:
-	GOARM=5 GOOS=linux GOARCH=arm go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go
+	go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go check.go
 
 run:
 	GOOS=darwin go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go && ./prayer_notifier
