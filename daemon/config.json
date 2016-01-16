@@ -1,7 +1,1 @@
-{
-    "enabled" : [
-        "Dhuhr",
-        "Maghrib",
-        "Isha"
-    ]
-}
+{"Enabled":["Dhuhr","Maghrib","Isha"]}

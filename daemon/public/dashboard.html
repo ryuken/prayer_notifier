@@ -1,0 +1,25 @@
+<div class="container">
+
+    <div class="row">
+        <img src="/img/mosque.png" style="width: 200px" />
+    </div>
+
+    <br />
+
+    <div id="prayers" class="row text-center" ng-repeat="prayer in prayers" ng-class="{ 'highlight' : prayer.isNext }">
+        <div class="col-xs-4">
+            {{ prayer.name }}
+        </div>
+        <div class="col-xs-4">
+            {{ today[prayer.name] }}
+        </div>
+        <div class="col-xs-4">
+            <button class="btn"
+                ng-class="{ 'btn-success' : true == prayer.active, 'btn-danger' : false == prayer.active }"
+                ng-click="toggle(prayer)"
+            >
+                (De)activeren
+            </button>
+        </div>
+    </div>
+</div>

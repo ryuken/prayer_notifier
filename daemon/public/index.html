@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="app">
+    <head>
+        <title>Prayer notifier</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+
+        <style>
+            .text-bold {
+                font-weight: bold;
+            }
+
+            #prayers {
+                padding: 5px;
+                border: 1px solid rgba(0,255,0,0.5);
+            }
+
+            .highlight {
+                font-weight: bold;
+                background-color:rgba(0,255,0,0.3);
+            }
+        </style>
+
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/moment/min/moment.min.js"></script>
+
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/angular-route/angular-route.min.js"></script>
+        <script src="dashboard.js"></script>
+    </head>
+
+    <body>
+
+        <div ng-view></div>
+
+    </body>
+
+</html>
