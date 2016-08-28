@@ -18,7 +18,7 @@
                 ng-class="{ 'btn-success' : true == prayer.active, 'btn-danger' : false == prayer.active }"
                 ng-click="toggle(prayer)"
             >
-                (De)activeren
+                {{ false === prayer.active ? "Activeren" : "Deactiveren" }}
             </button>
         </div>
     </div>
