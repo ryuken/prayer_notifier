@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"io/ioutil"
 	"log"
 	"time"
@@ -10,64 +9,55 @@ import (
 
 func ParseToday() {
 
-	type Date struct {
+	type Item struct {
+		Date    string `json:"date_for"`
+		Fajr    string
+		Sunrise string `json:"shurooq"`
+		Dhuhr   string
+		Asr     string
+		Maghrib string
+		Isha    string
+	}
+
+	type Monthly struct {
 		Country string
 		City    string
-		Day     int    `xml:"day,attr"`
-		Month   string `xml:"month,attr"`
-		Year    int    `xml:"year,attr"`
-		Fajr    string `xml:"fajr"`
-		Sunrise string `xml:"sunrise"`
-		Dhuhr   string `xml:"dhuhr"`
-		Asr     string `xml:"asr"`
-		Maghrib string `xml:"maghrib"`
-		Isha    string `xml:"isha"`
+		Items   []Item
 	}
 
-	type Result struct {
-		XMLName xml.Name `xml:"prayer"`
-		City    string   `xml:"city"`
-		Country string   `xml:"country"`
-		Date    []Date   `xml:"date"`
-	}
-
-	content, err := ioutil.ReadFile("the_hague.xml")
+	content, err := ioutil.ReadFile("the_hague.json")
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	r := Result{}
+	month := Monthly{}
 
-	err = xml.Unmarshal(content, &r)
+	err = json.Unmarshal(content, &month)
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	const layout = "01"    // Month
-	const clock = "15:04" // Clock
+	const layout = "2006-1-2" // Month
 
 	today := Date{}
 
-	t := time.Now()
+	now := time.Now()
 
-	for _, v := range r.Date {
+	for _, v := range month.Items {
 
-		if v.Day == t.Day() && t.Format(layout) == v.Month && v.Year == t.Year() {
+		if v.Date == now.Format(layout) {
 
-			today = v
-
-			today.Country = r.Country
-			today.City = r.City
-			today.Fajr = ConvertTo24(v.Fajr, "AM")
-			today.Sunrise = ConvertTo24(v.Sunrise, "AM")
-			today.Dhuhr = ConvertTo24(v.Dhuhr, "AM")
-			today.Asr = ConvertTo24(v.Asr, "PM")
-			today.Maghrib = ConvertTo24(v.Maghrib, "PM")
-			today.Isha = ConvertTo24(v.Isha, "PM")
+			today.Date = v.Date
+			today.Fajr = ConvertTo24(v.Fajr)
+			today.Sunrise = ConvertTo24(v.Sunrise)
+			today.Dhuhr = ConvertTo24(v.Dhuhr)
+			today.Asr = ConvertTo24(v.Asr)
+			today.Maghrib = ConvertTo24(v.Maghrib)
+			today.Isha = ConvertTo24(v.Isha)
 
 			break
 		}

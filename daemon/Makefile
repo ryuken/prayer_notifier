@@ -5,7 +5,7 @@ pi:
 	go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go check.go
 
 run:
-	GOOS=darwin go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go && ./prayer_notifier
+	GOOS=darwin go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go check.go && ./prayer_notifier
 
 deploy:
 	scp -P 85 prayer_notifier pi@192.168.178.23:/home/pi/Projects/prayer_notifier/

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"gopkg.in/fsnotify.v1"
+	"github.com/fsnotify/fsnotify"
 
 	tools "th_tools"
 
@@ -22,31 +22,19 @@ type Config struct {
 }
 
 type Date struct {
-	Day     int    `xml:"day,attr"`
-	Month   string `xml:"month,attr"`
-	Year    int    `xml:"year,attr"`
-	Fajr    string `xml:"fajr"`
-	Sunrise string `xml:"sunrise"`
-	Dhuhr   string `xml:"dhuhr"`
-	Asr     string `xml:"asr"`
-	Maghrib string `xml:"maghrib"`
-	Isha    string `xml:"isha"`
+	Date    string
+	Fajr    string
+	Sunrise string
+	Dhuhr   string
+	Asr     string
+	Maghrib string
+	Isha    string
 }
 
 var Today Date
 
 func main() {
-	/*
-		logFile, err := os.OpenFile("server.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 
-		if err != nil {
-			panic(err)
-		}
-
-		defer logFile.Close()
-
-		log.SetOutput(logFile)
-	*/
 	loadToday := func() {
 
 		content, err := ioutil.ReadFile("today.json")
