@@ -1,0 +1,39 @@
+.no-margin {
+    margin: 0;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+#prayers {
+    padding: 5px;
+    border: 1px solid rgba(0,255,0,0.5);
+}
+
+.highlight {
+    font-weight: bold;
+    background-color:rgba(0,255,0,0.3);
+}
+
+.active {
+    color: green;
+}
+.active:active {
+    background-color: darkgreen;
+    color: white;
+    font-weight: bold;
+}
+
+.inactive {
+    color: red;
+}
+.inactive:active {
+    color: white;
+    font-weight: bold;
+    background-color: darkred;
+}
+
+.prayer-item {
+    padding: 5px;
+}
