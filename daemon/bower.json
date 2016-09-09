@@ -3,8 +3,7 @@
   "description": "Prayer notifier",
   "main": "src/",
   "license": "MIT",
-  "keywords": [
-  ],
+  "keywords": [],
   "homepage": "",
   "ignore": [
     "**/.*",
@@ -16,6 +15,7 @@
   ],
   "dependencies": {
     "font-awesome": "^4.6.3",
-    "flexboxgrid": "^6.3.0"
+    "flexboxgrid": "^6.3.0",
+    "bootstrap": "^3.3.7"
   }
 }
