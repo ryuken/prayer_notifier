@@ -1,10 +1,11 @@
 import { combineReducers } from 'redux'
 
-import prayers from './prayers'
+import {prayers, nextPrayer} from './prayers'
 import config from './config'
 
 const rootReducer = combineReducers({
     prayers,
+    nextPrayer,
     config,
 })
 

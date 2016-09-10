@@ -17,6 +17,8 @@ func check() {
 	t := time.Now()
 	currentTime := t.Format(clock)
 
+	fmt.Println("Current time", currentTime)
+
 	enabled := viper.GetStringSlice("Enabled")
 
 	if currentTime == Today.Fajr {

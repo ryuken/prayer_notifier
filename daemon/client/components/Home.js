@@ -4,42 +4,6 @@ import moment from 'moment'
 
 class Home extends React.Component {
 
-    state = {
-        nextPrayer : null
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {prayers} = nextProps
-        this.checkNext(prayers)
-    }
-
-    checkNext(prayers) {
-        const now = moment()
-
-        const list = [
-            "Fajr",
-            "Sunrise",
-            "Dhuhr",
-            "Asr",
-            "Maghrib",
-            "Isha"
-        ]
-
-        if(now.isBefore(moment(prayers.Fajr, "HH:mm")))
-            this.setState({ nextPrayer : list[0] })
-        else {
-            list.forEach(item => {
-                const time = moment(prayers[item], "HH:mm")
-
-                if(time.isAfter(now))
-                    this.setState({ nextPrayer : item })
-            })
-
-            if(now.isAfter(moment(prayers.Isha, "HH:mm").add(1, "hour")))
-                this.setState({ nextPrayer : list[0] })
-        }
-    }
-
     renderDate() {
         const {prayers} = this.props
 
@@ -50,8 +14,8 @@ class Home extends React.Component {
 
     renderPrayer(item) {
 
-        const {prayers, config} = this.props
-        const {nextPrayer} = this.state
+        const {prayers, nextPrayer, config} = this.props
+
         let classes = "row prayer-item center-xs"
 
         if(item == nextPrayer)
@@ -66,7 +30,7 @@ class Home extends React.Component {
             return (
                 <div className={classes}>
                     <div className="col-xs-6">{item}</div>
-                    <div className="col-xs-6">{prayers[item]}</div>
+                    <div className="col-xs-6 text-center">{prayers[item]}</div>
                 </div>
             )
     }
@@ -78,20 +42,24 @@ class Home extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-xs-12 col-sm-3">
-                        <img src="/img/mosque.png" style={{ width: "150px", height: "150px" }} />
+                    <div className="col-xs-2">
+                        <img src="/img/mosque.png" style={{ width: "50px", height: "50px" }} />
                     </div>
-                    <div className="col-xs-12 col-sm-6">
-                        <h2 className="no-margin" style={{ marginBottom : "10px" }}>{this.renderDate()}</h2>
-
-                        {this.renderPrayer("Fajr")}
-                        {this.renderPrayer("Sunrise")}
-                        {this.renderPrayer("Dhuhr")}
-                        {this.renderPrayer("Asr")}
-                        {this.renderPrayer("Maghrib")}
-                        {this.renderPrayer("Isha")}
+                    <div className="col-xs-10 text-center">
+                        <h2 className="no-margin"
+                            style={{ marginBottom : "10px", marginTop : "10px" }}
+                        >
+                            {this.renderDate()}
+                        </h2>
                     </div>
                 </div>
+
+                {this.renderPrayer("Fajr")}
+                {this.renderPrayer("Sunrise")}
+                {this.renderPrayer("Dhuhr")}
+                {this.renderPrayer("Asr")}
+                {this.renderPrayer("Maghrib")}
+                {this.renderPrayer("Isha")}
             </div>
         )
     }
@@ -100,6 +68,7 @@ class Home extends React.Component {
 const mapStateToProps = (state) => {
     return {
         prayers : state.app.prayers,
+        nextPrayer : state.app.nextPrayer,
         config : state.app.config,
     }
 }
