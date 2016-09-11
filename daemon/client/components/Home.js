@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
 
+import {update_config} from '../actions/config'
+
 class Home extends React.Component {
 
     renderDate() {
@@ -10,6 +12,25 @@ class Home extends React.Component {
         if(prayers.Date) {
             return moment(prayers.Date, "YYYY-M-D").format("DD-MM-YYYY")
         }
+    }
+
+    togglePrayer = (e) => {
+        const {dispatch, config} = this.props
+        const el = e.target
+        let prayer = el.dataset.prayer
+
+        if("undefined" === typeof prayer) {
+            prayer = el.parentNode.dataset.prayer
+        }
+
+        if("undefined" !== typeof config.Enabled && -1 == config.Enabled.indexOf(prayer)) {
+            config.Enabled.push(prayer)
+        }
+        else {
+            config.Enabled.splice(config.Enabled.indexOf(prayer), 1)
+        }
+
+        dispatch(update_config(config))
     }
 
     renderPrayer(item) {
@@ -28,7 +49,7 @@ class Home extends React.Component {
 
         if(prayers[item])
             return (
-                <div className={classes}>
+                <div className={classes} onClick={this.togglePrayer} data-prayer={item}>
                     <div className="col-xs-6">{item}</div>
                     <div className="col-xs-6 text-center">{prayers[item]}</div>
                 </div>

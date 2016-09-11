@@ -17,3 +17,14 @@ export const fetch_config = () => {
         })
     }
 }
+
+export const update_config = (data) => {
+    return dispatch => {
+        $.post('/config', JSON.stringify(data), function(json) {
+            dispatch(fetch_config())
+        })
+        .fail(function() {
+            alert( "error, kon instellingen niet bijwerken" );
+        })
+    }
+}

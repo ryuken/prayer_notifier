@@ -37061,9 +37061,19 @@
 	    _inherits(App, _React$Component);
 
 	    function App() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
 	        _classCallCheck(this, App);
 
-	        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = App.__proto__ || Object.getPrototypeOf(App)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	            poller: null
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
 	    _createClass(App, [{
@@ -37072,8 +37082,18 @@
 	            var dispatch = this.props.dispatch;
 
 	            dispatch((0, _prayers.fetch_prayers)());
-	            dispatch((0, _prayers.fetch_next_prayer)());
 	            dispatch((0, _config.fetch_config)());
+
+	            this.setState({
+	                poller: setInterval(function () {
+	                    dispatch((0, _prayers.fetch_next_prayer)());
+	                }, 1000)
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            clearInterval(this.state.poller);
 	        }
 	    }, {
 	        key: 'render',
@@ -47234,7 +47254,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.fetch_config = exports.receive_config = undefined;
+	exports.update_config = exports.fetch_config = exports.receive_config = undefined;
 
 	var _jquery = __webpack_require__(565);
 
@@ -47255,6 +47275,16 @@
 	            dispatch(receive_config(json));
 	        }).fail(function () {
 	            alert("error, kon instellingen niet ophalen");
+	        });
+	    };
+	};
+
+	var update_config = exports.update_config = function update_config(data) {
+	    return function (dispatch) {
+	        _jquery2.default.post('/config', JSON.stringify(data), function (json) {
+	            dispatch(fetch_config());
+	        }).fail(function () {
+	            alert("error, kon instellingen niet bijwerken");
 	        });
 	    };
 	};
@@ -47281,6 +47311,8 @@
 
 	var _moment2 = _interopRequireDefault(_moment);
 
+	var _config = __webpack_require__(566);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47293,9 +47325,36 @@
 	    _inherits(Home, _React$Component);
 
 	    function Home() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
 	        _classCallCheck(this, Home);
 
-	        return _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).apply(this, arguments));
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Home.__proto__ || Object.getPrototypeOf(Home)).call.apply(_ref, [this].concat(args))), _this), _this.togglePrayer = function (e) {
+	            var _this$props = _this.props;
+	            var dispatch = _this$props.dispatch;
+	            var config = _this$props.config;
+
+	            var el = e.target;
+	            var prayer = el.dataset.prayer;
+
+	            if ("undefined" === typeof prayer) {
+	                prayer = el.parentNode.dataset.prayer;
+	            }
+
+	            if ("undefined" !== typeof config.Enabled && -1 == config.Enabled.indexOf(prayer)) {
+	                config.Enabled.push(prayer);
+	            } else {
+	                config.Enabled.splice(config.Enabled.indexOf(prayer), 1);
+	            }
+
+	            dispatch((0, _config.update_config)(config));
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
 	    _createClass(Home, [{
@@ -47325,7 +47384,7 @@
 
 	            if (prayers[item]) return _react2.default.createElement(
 	                'div',
-	                { className: classes },
+	                { className: classes, onClick: this.togglePrayer, 'data-prayer': item },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'col-xs-6' },

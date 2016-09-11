@@ -79,7 +79,7 @@ func main() {
 	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)))
 
 	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
-	ht.Post("/config/update", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
+	ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
 
 	ht.Get("/qm", alice.New(c.Handler).Then(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("xDGJGDx"))
