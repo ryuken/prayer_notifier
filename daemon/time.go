@@ -27,7 +27,7 @@ func ConvertTo24(time string) string {
 
 	} else if "pm" == format {
 
-		if first <= 12 {
+		if first < 12 {
 			result[0] = strconv.FormatInt(12+first, 10)
 		}
 

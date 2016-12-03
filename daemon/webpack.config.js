@@ -8,21 +8,22 @@ var plugins = [
     new webpack.optimize.DedupePlugin(),
 ];
 
-if (process.env.NODE_ENV === 'production') {
-    plugins = plugins.concat([
-        new webpack.optimize.UglifyJsPlugin({
-            output: {
-                comments: false
-            },
-            test: /bundle\.js?$/
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('production')
-            }
-        })
-    ]);
-};
+plugins = plugins.concat([
+    new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        },
+        output: {
+            comments: false
+        },
+        test: /bundle\.js?$/
+    }),
+    new webpack.DefinePlugin({
+        'process.env': {
+            NODE_ENV: JSON.stringify('production')
+        }
+    })
+]);
 
 var config = {
     entry: {

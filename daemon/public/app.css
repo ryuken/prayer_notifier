@@ -1,3 +1,8 @@
+body {
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .no-margin {
     margin: 0;
 }
@@ -6,14 +11,9 @@
     font-weight: bold;
 }
 
-#prayers {
-    padding: 5px;
-    border: 1px solid rgba(0,255,0,0.5);
-}
-
 .highlight {
     font-weight: bold;
-    background-color:rgba(0,255,0,0.3);
+    background-color:rgba(0,255,0,0.4) !important;
 }
 
 .active {
@@ -36,4 +36,7 @@
 
 .prayer-item {
     padding: 5px;
+    font-size: 20pt;
+    background-color: rgba(0,50,80,0.8);
+    font-weight: bold;
 }

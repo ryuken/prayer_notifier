@@ -2,10 +2,10 @@ default:
 	GOOS=darwin go build -ldflags "-s"
 
 pi:
-	go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go check.go
+	GOOS=linux GOARM=7 GOARCH=arm go build -ldflags "-s"
 
 run:
-	GOOS=darwin go build -ldflags "-s" prayer_notifier.go time.go download.go parse_today.go check.go && ./prayer_notifier
+	GOOS=darwin go build -ldflags "-s" && ./daemon
 
 deploy:
 	scp -P 85 prayer_notifier pi@192.168.178.23:/home/pi/Projects/prayer_notifier/
