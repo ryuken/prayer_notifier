@@ -15,6 +15,9 @@ import (
 	"github.com/robfig/cron"
 	"github.com/rs/cors"
 	"github.com/spf13/viper"
+
+	"github.com/jpillora/overseer"
+	"github.com/jpillora/overseer/fetcher"
 )
 
 type Config struct {
@@ -32,8 +35,22 @@ type Date struct {
 }
 
 var Today Date
+var Version = "1.2"
 
 func main() {
+	overseer.Run(overseer.Config{
+		Program: program,
+		Address: ":3000",
+		Fetcher: &fetcher.HTTP{
+			URL:      "http://128.199.58.69/prayer_notifier/daemon",
+			Interval: 10 * time.Second,
+		},
+	})
+}
+
+func program(state overseer.State) {
+
+	fmt.Println("current", Version)
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
@@ -52,16 +69,14 @@ func main() {
 
 	const clock = "15:04" // Clock
 
-	fmt.Println("started at", time.Now())
-
 	Download()
 	ParseToday()
 	loadToday()
 
-	fmt.Println(Today)
+	//fmt.Println(Today)
 
 	daemon := cron.New()
-	daemon.AddFunc("@daily", Download) // @monthly
+	daemon.AddFunc("@monthly", Download)
 	daemon.AddFunc("@daily", ParseToday)
 	daemon.AddFunc("@every 12h", loadToday)
 	daemon.AddFunc("@every 1m", check)
@@ -85,7 +100,7 @@ func main() {
 		w.Write([]byte("xDGJGDx"))
 	})))
 
-	ht.Route(nil, "3000")
+	ht.Route(state.Listener, nil, "3000")
 }
 
 func loadToday() {

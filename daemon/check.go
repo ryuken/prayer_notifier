@@ -69,8 +69,6 @@ func check() {
 				break
 			}
 		}
-	} else {
-		//fmt.Println(currentTime, "nothing to do...")
 	}
 }
 
