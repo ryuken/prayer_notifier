@@ -9,55 +9,31 @@ import (
 
 func ParseToday() {
 
-	type Item struct {
-		Date    string `json:"date_for"`
-		Fajr    string
-		Sunrise string `json:"shurooq"`
-		Dhuhr   string
-		Asr     string
-		Maghrib string
-		Isha    string
-	}
-
-	type Monthly struct {
-		Country string
-		City    string
-		Items   []Item
-	}
-
-	content, err := ioutil.ReadFile("the_hague.json")
+	content, err := ioutil.ReadFile("city.json")
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	month := Monthly{}
+	items := []Item{}
 
-	err = json.Unmarshal(content, &month)
+	err = json.Unmarshal(content, &items)
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	const layout = "2006-1-2" // Month
-
-	today := Date{}
+	today := Item{}
 
 	now := time.Now()
 
-	for _, v := range month.Items {
+	for _, v := range items {
 
-		if v.Date == now.Format(layout) {
+		if v.Date == now.Format("02-01-2006") {
 
-			today.Date = v.Date
-			today.Fajr = ConvertTo24(v.Fajr)
-			today.Sunrise = ConvertTo24(v.Sunrise)
-			today.Dhuhr = ConvertTo24(v.Dhuhr)
-			today.Asr = ConvertTo24(v.Asr)
-			today.Maghrib = ConvertTo24(v.Maghrib)
-			today.Isha = ConvertTo24(v.Isha)
+			today = v
 
 			break
 		}

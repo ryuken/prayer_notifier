@@ -1,16 +1,16 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
+	"strings"
+	"io/ioutil"
 	"net/http"
+	"github.com/spf13/viper"
 )
 
 func Download() {
 
-	const layout = "01" // Month
-
-	res, err := http.Get("http://muslimsalat.com/the+hague/monthly.json?key=7606bab53522844593e9615c4dbc621c")
+	res, err := http.Get("https://4b0dq407n5.execute-api.eu-central-1.amazonaws.com/Production/prayers?City=" + strings.Replace(viper.GetString("City"), " ", "%20", 1))
 
 	if err != nil {
 		log.Println(err)
@@ -25,7 +25,7 @@ func Download() {
 		return
 	}
 
-	err = ioutil.WriteFile("the_hague.json", robots, 0665)
+	err = ioutil.WriteFile("city.json", robots, 0665)
 
 	if err != nil {
 		log.Println(err)

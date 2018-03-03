@@ -2,6 +2,18 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+.navbar-default {
+    background-color: #64b741;
+    border-color: #64b741;
+}
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    background-color: #64B741;
+    color: #fff;
+}
+
+.list-group{
+    color: #000;
+}
 
 .no-margin {
     margin: 0;
@@ -14,6 +26,7 @@ body {
 .highlight {
     font-weight: bold;
     background-color:rgba(0,255,0,0.4) !important;
+    color: #fff !important;
 }
 
 .active {
@@ -38,4 +51,9 @@ body {
     padding: 5px;
     font-size: 20pt;
     background-color: rgba(0,50,80,0.8);
+}
+
+#content {
+    position: relative;
+    top: 80px;
 }

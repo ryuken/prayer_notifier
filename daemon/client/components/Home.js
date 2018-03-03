@@ -1,21 +1,35 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import moment from 'moment'
 
-import {update_config} from '../actions/config'
+import {inject, observer} from 'mobx-react'
 
-class Home extends React.Component {
+@inject("stores") @observer
+export default class Home extends React.Component {
 
-    renderDate() {
-        const {prayers} = this.props
+    state = {
+        clock : null,
+        now : moment().format("DD-MM-YYYY HH:mm:ss")
+    }
 
-        if(prayers.Date) {
-            return moment(prayers.Date, "YYYY-M-D").format("DD-MM-YYYY")
-        }
+    componentWillMount() {
+        this.setState({
+            clock : setInterval(() => {
+                this.setState({ now: moment().format("DD-MM-YYYY HH:mm:ss") })
+            }, 1000)
+        })
+
+        // get prayer times every 10 minutes
+        setInterval(() => {
+            this.props.stores.prayers.fetch()
+        }, 600000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.clock)
     }
 
     togglePrayer = (e) => {
-        const {dispatch, config} = this.props
+        const {stores} = this.props
         const el = e.target
         let prayer = el.dataset.prayer
 
@@ -23,42 +37,46 @@ class Home extends React.Component {
             prayer = el.parentNode.dataset.prayer
         }
 
-        if("undefined" !== typeof config.Enabled && -1 == config.Enabled.indexOf(prayer)) {
-            config.Enabled.push(prayer)
+        if("undefined" !== typeof stores.config.Enabled && -1 === stores.config.Enabled.indexOf(prayer)) {
+            stores.config.Enabled.push(prayer)
         }
         else {
-            config.Enabled.splice(config.Enabled.indexOf(prayer), 1)
+            stores.config.Enabled.splice(stores.config.Enabled.indexOf(prayer), 1)
         }
 
-        dispatch(update_config(config))
+        stores.config.update()
     }
 
     renderPrayer(item) {
 
-        const {prayers, nextPrayer, config} = this.props
+        const {stores} = this.props
 
         let classes = "row prayer-item center-xs"
+        let active = false
 
-        if(item == nextPrayer)
+        if(item === stores.prayers.nextPrayer)
             classes += " highlight"
 
-        if("undefined" !== typeof config.Enabled && -1 == config.Enabled.indexOf(item))
+        if("undefined" !== typeof stores.config.Enabled && -1 === stores.config.Enabled.indexOf(item))
             classes += " inactive"
-        else
+        else {
             classes += " active"
+            active = true
+        }
 
-        if(prayers[item])
+        if(stores.prayers.items[item])
             return (
                 <div className={classes} onClick={this.togglePrayer} data-prayer={item}>
-                    <div className="col-xs-6">{item}</div>
-                    <div className="col-xs-6 text-center">{prayers[item]}</div>
+                    <div className="col-xs-6">
+                        <span className={"fa fa-circle " + (active ? 'active' : 'inactive')} /> &nbsp;
+                        {item}
+                    </div>
+                    <div className="col-xs-6 text-center">{stores.prayers.items[item]}</div>
                 </div>
             )
     }
 
     render() {
-
-        const {prayers} = this.props
 
         return (
             <div className="container">
@@ -67,10 +85,8 @@ class Home extends React.Component {
                         <img src="/img/mosque.png" style={{ width: "50px", height: "50px" }} />
                     </div>
                     <div className="col-xs-10 text-center">
-                        <h2 className="no-margin"
-                            style={{ marginBottom : "10px", marginTop : "10px" }}
-                        >
-                            {this.renderDate()}
+                        <h2 className="no-margin" style={{ marginBottom : "10px", marginTop : "10px" }}>
+                            {this.props.stores.config.City} - {this.state.now}
                         </h2>
                     </div>
                 </div>
@@ -85,13 +101,3 @@ class Home extends React.Component {
         )
     }
 }
-
-const mapStateToProps = (state) => {
-    return {
-        prayers : state.app.prayers,
-        nextPrayer : state.app.nextPrayer,
-        config : state.app.config,
-    }
-}
-
-export default connect(mapStateToProps)(Home)

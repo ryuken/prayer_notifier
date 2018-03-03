@@ -1,23 +1,26 @@
 import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
-import { Provider } from 'react-redux'
+import { Provider } from 'mobx-react'
 import { Router, IndexRoute, Route, browserHistory } from 'react-router'
-import { syncHistoryWithStore } from 'react-router-redux'
+import { RouterStore, syncHistoryWithStore } from 'mobx-react-router'
 
-import configureStore from './configureStore'
+const routingStore = new RouterStore()
 
-const store = configureStore()
-const history = syncHistoryWithStore(browserHistory, store)
+const history = syncHistoryWithStore(browserHistory, routingStore)
+
+import Stores from './stores'
 
 import App from './containers/App'
 import Home from './components/Home'
+import Settings from './components/Settings'
 
 render(
-    <Provider store={store}>
+    <Provider stores={Stores} routingStore={routingStore}>
         <Router history={history}>
             <Route path="/" component={App}>
                 <IndexRoute component={Home} />
+                <Route path="settings" component={Settings} />
             </Route>
         </Router>
     </Provider>,

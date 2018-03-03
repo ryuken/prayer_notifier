@@ -31,8 +31,13 @@ func check() {
 			}
 		}
 	} else if currentTime == Today.Sunrise {
-		fmt.Println("It's Sunrise!")
-		play("mpc", "play", "2")
+		for _, prayer := range enabled {
+			if "Sunrise" == prayer {
+				fmt.Println("It's Sunrise!")
+				play("mpc", "play", "2")
+				break
+			}
+		}
 	} else if currentTime == Today.Dhuhr {
 		fmt.Println("It's Dhuhr!")
 

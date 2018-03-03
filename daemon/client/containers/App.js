@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react'
-import { connect } from 'react-redux'
 
-import {fetch_prayers, fetch_next_prayer} from '../actions/prayers'
-import {fetch_config} from '../actions/config'
+import Menu from '../components/Menu'
 
-class App extends React.Component {
+import {inject, observer} from 'mobx-react'
+
+@inject("stores") @observer
+export default class App extends React.Component {
 
     state = {
         poller : null,
@@ -17,26 +18,30 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const {dispatch} = this.props
-        dispatch(fetch_prayers())
-        dispatch(fetch_config())
+        const {stores} = this.props
+        stores.prayers.fetch()
+        stores.config.fetch()
 
+        this.changeBackground()
+
+        this.setState({
+            poller : setInterval(function() {
+                stores.prayers.fetchNext()
+            }, 1000)
+        })
+    }
+
+    changeBackground() {
         const {backgrounds} = this.state
 
         if(window.screen.width >= 800) {
 
-            const randomIndex = Math.floor(Math.random() * (backgrounds.length - 1)) + 0
+            const randomIndex = Math.floor(Math.random() * (backgrounds.length - 1))
 
             const body = document.querySelector('body')
             body.style['background-image'] = `url('${backgrounds[randomIndex]}')`
             body.style.color = "#fff"
         }
-
-        this.setState({
-            poller : setInterval(function() {
-                dispatch(fetch_next_prayer())
-            }, 1000)
-        })
     }
 
     componentWillUnmount() {
@@ -45,14 +50,14 @@ class App extends React.Component {
 
     render() {
 
-        const year = new Date().getFullYear()
-
         return (
             <div>
-                {this.props.children}
+                <Menu />
+
+                <div id="content">
+                    {this.props.children}
+                </div>
             </div>
         )
     }
 }
-
-export default connect()(App)

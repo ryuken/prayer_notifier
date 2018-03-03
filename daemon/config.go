@@ -15,6 +15,7 @@ func configUpdate(w http.ResponseWriter, r *http.Request) (string, interface{}, 
 	decoder := json.NewDecoder(r.Body)
 
 	type Post struct {
+		City 	string
 		Enabled []string
 	}
 
