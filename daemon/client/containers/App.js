@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 
-import Menu from '../components/Menu'
-
+import { withRouter } from "react-router"
 import {inject, observer} from 'mobx-react'
 
-@inject("stores") @observer
+import Menu from '../components/Menu'
+
+@withRouter @inject("stores") @observer
 export default class App extends React.Component {
 
     state = {
@@ -18,6 +19,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
+
         const {stores} = this.props
         stores.prayers.fetch()
         stores.config.fetch()
@@ -32,6 +34,7 @@ export default class App extends React.Component {
     }
 
     changeBackground() {
+
         const {backgrounds} = this.state
 
         if(window.screen.width >= 800) {

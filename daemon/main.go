@@ -19,23 +19,22 @@ import (
 	"github.com/jpillora/overseer"
 	"github.com/jpillora/overseer/fetcher"
 	"github.com/y0ssar1an/q"
-    "github.com/nytimes/gziphandler"
 )
 
 type Config struct {
-	City 	string
+	City    string
 	Enabled []string
 }
 
 type Item struct {
-	Date    	string
-	Fajr    	string
-	Sunrise 	string
-	Dhuhr   	string
-	Asr     	string
-	Maghrib 	string
-	Isha    	string
-	Midgnight    string
+	Date      string
+	Fajr      string
+	Sunrise   string
+	Dhuhr     string
+	Asr       string
+	Maghrib   string
+	Isha      string
+	Midgnight string
 }
 
 var Version = "1.7"
@@ -99,6 +98,7 @@ func program(state overseer.State) {
 	})
 
 	ht.Get("/settings", index)
+	ht.Get("/clock", index)
 
 	ht.Get("/brightness", alice.New(c.Handler).Then(tools.AppHandler(brightness)))
 	ht.Get("/fullscreen", alice.New(c.Handler).Then(tools.AppHandler(fullscreen)))
@@ -115,7 +115,7 @@ func program(state overseer.State) {
 
 	ht.Route(state.Listener, nil)
 
-    ht.Router.PathPrefix("/").Handler(nocache(gziphandler.GzipHandler(http.FileServer(http.Dir("./public/")))))
+	//ht.Router.PathPrefix("/").Handler(nocache(gziphandler.GzipHandler(http.FileServer(http.Dir("./public/")))))
 	http.Handle("/", ht.Router)
 }
 

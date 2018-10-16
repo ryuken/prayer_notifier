@@ -11,6 +11,7 @@ import {inject, observer} from 'mobx-react'
 export default class Settings extends Component {
 
     setCity = (e) => {
+        
         const {stores} = this.props
         stores.config.City = e.target.innerHTML
 

@@ -1,5 +1,5 @@
 default:
-	GOOS=darwin go build -ldflags "-s"
+	go build -ldflags "-s"
 
 pi:
 	GOOS=linux GOARM=7 GOARCH=arm go build -ldflags "-s"
