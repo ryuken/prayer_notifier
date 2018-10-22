@@ -37,7 +37,7 @@ type Item struct {
 	Midgnight string
 }
 
-var Version = "1.7"
+var Version = "1.8"
 var Today Item
 
 func main() {

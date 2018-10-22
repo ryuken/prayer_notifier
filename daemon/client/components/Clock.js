@@ -33,7 +33,7 @@ export default class Clock extends React.Component {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-xs-12 text-center">
-                        <h1 style={{ fontSize: "25em" }}>
+                        <h1 style={{ fontSize: "20em" }}>
                             {this.state.now}
                         </h1>
                     </div>

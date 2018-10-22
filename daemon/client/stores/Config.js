@@ -12,7 +12,7 @@ export default class Config {
 
     @action fetch() {
 
-        $.get('/config', (json) => {
+        $.get('http://localhost:3000/config', (json) => {
             this.City = json.City
             this.Enabled = json.Enabled
         })
@@ -29,7 +29,7 @@ export default class Config {
 
         $.ajax({
             method : "post",
-            url : '/config',
+            url : 'http://localhost:3000/config',
             data : JSON.stringify(data),
             success: (json) => {
                 this.fetch()
@@ -43,14 +43,14 @@ export default class Config {
     @action brightness(amount = 100) {
         $.ajax({
             method : "get",
-            url : '/brightness?amount=' + amount
+            url : 'http://localhost:3000/brightness?amount=' + amount
         })
     }
 
     @action fullscreen() {
         $.ajax({
             method : "get",
-            url : '/fullscreen'
+            url : 'http://localhost:3000/fullscreen'
         })
     }
 }

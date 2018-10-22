@@ -11,7 +11,7 @@ export default class Prayers {
 
     @action fetch() {
 
-        $.get('/today', (json) => {
+        $.get('http://localhost:3000/today', (json) => {
             this.items = json
         })
         .fail(function() {
@@ -20,7 +20,7 @@ export default class Prayers {
     }
 
     @action fetchNext() {
-        $.get('/nextPrayer', (json) => {
+        $.get('http://localhost:3000/nextPrayer', (json) => {
             this.nextPrayer = json.prayer
         })
         .fail(function() {
