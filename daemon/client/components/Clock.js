@@ -8,7 +8,7 @@ export default class Clock extends React.Component {
 
     state = {
         clock : null,
-        now : moment().format("HH:mm:ss")
+        now : moment().format("HH:mm")
     }
 
     componentDidMount() {
@@ -18,7 +18,7 @@ export default class Clock extends React.Component {
 
         this.setState({
             clock : setInterval(() => {
-                this.setState({ now: moment().format("HH:mm:ss") })
+                this.setState({ now: moment().format("HH:mm") })
             }, 1000)
         })
     }
@@ -33,7 +33,7 @@ export default class Clock extends React.Component {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-xs-12 text-center">
-                        <h1 style={{ fontSize: "20em" }}>
+                        <h1 style={{ fontSize: "18em" }}>
                             {this.state.now}
                         </h1>
                     </div>
