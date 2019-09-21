@@ -28,6 +28,8 @@ func nextPrayer(w http.ResponseWriter, r *http.Request) (string, interface{}, er
 		result["prayer"] = "Maghrib"
 	} else if currentTime < Today.Isha {
 		result["prayer"] = "Isha"
+	} else if currentTime < Today.Midnight {
+		result["prayer"] = "Midnight"
 	}
 
 	return "json", result, nil

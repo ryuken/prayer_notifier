@@ -27,17 +27,17 @@ type Config struct {
 }
 
 type Item struct {
-	Date      string
-	Fajr      string
-	Sunrise   string
-	Dhuhr     string
-	Asr       string
-	Maghrib   string
-	Isha      string
-	Midgnight string
+	Date     string
+	Fajr     string
+	Sunrise  string
+	Dhuhr    string
+	Asr      string
+	Maghrib  string
+	Isha     string
+	Midnight string
 }
 
-var Version = "1.8"
+var Version = "1.9"
 var Today Item
 
 func main() {
