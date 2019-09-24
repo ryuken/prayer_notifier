@@ -1,20 +1,20 @@
 import React from 'react'
-import moment from 'moment'
-
 import {inject, observer} from 'mobx-react'
+
+import { getDateTime } from "../getTime"
 
 @inject("stores") @observer
 export default class Home extends React.Component {
 
     state = {
         clock : null,
-        now : moment().format("DD-MM-YYYY HH:mm:ss")
+        now : getDateTime()
     }
 
     componentWillMount() {
         this.setState({
             clock : setInterval(() => {
-                this.setState({ now: moment().format("DD-MM-YYYY HH:mm:ss") })
+                this.setState({ now: getDateTime() })
             }, 1000)
         })
 
@@ -68,7 +68,7 @@ export default class Home extends React.Component {
             return (
                 <div className={classes} onClick={this.togglePrayer} data-prayer={item}>
                     <div className="col-xs-6">
-                        <span className={"fa fa-circle " + (active ? 'active' : 'inactive')} /> &nbsp;
+                        <span className={"fa fa-circle " + (active ? 'active' : 'inactive')} style={{ marginRight: "10px" }} />
                         {item}
                     </div>
                     <div className="col-xs-6 text-center">{stores.prayers.items[item]}</div>
@@ -97,6 +97,7 @@ export default class Home extends React.Component {
                 {this.renderPrayer("Asr")}
                 {this.renderPrayer("Maghrib")}
                 {this.renderPrayer("Isha")}
+                {this.renderPrayer("Midnight")}
             </div>
         )
     }

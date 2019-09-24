@@ -1,13 +1,14 @@
 const path = require('path');
 
 const config = {
+    mode: "production",
     entry: {
         bundle: path.join(__dirname, 'client/index.js')
     },
     output: {
         path: path.join(__dirname, 'public'),
-        //publicPath: "/static/build/",
-        filename: 'bundle.js'
+        filename: '[name].bundle.js',
+        chunkFilename: '[name].bundle.js',
     },
     module: {
         rules: [

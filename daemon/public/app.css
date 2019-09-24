@@ -1,6 +1,7 @@
 body {
     background-repeat: no-repeat;
     background-size: cover;
+    background-color: #000;
 }
 .navbar-default {
     background-color: #64b741;

@@ -1,24 +1,24 @@
 import React from 'react'
-import moment from 'moment'
-
 import {inject, observer} from 'mobx-react'
+
+import getTime from "../getTime"
 
 @inject("stores") @observer
 export default class Clock extends React.Component {
 
     state = {
         clock : null,
-        now : moment().format("HH:mm")
+        now : getTime()
     }
 
     componentDidMount() {
 
-        document.querySelector('body').style['background-image'] = ""
-        document.querySelector('body').style['background-color'] = "#000"
+        // document.querySelector('body').style['background-image'] = ""
+        // document.querySelector('body').style['background-color'] = "#000"
 
         this.setState({
             clock : setInterval(() => {
-                this.setState({ now: moment().format("HH:mm") })
+                this.setState({ now: getTime() })
             }, 1000)
         })
     }

@@ -2,7 +2,6 @@
  * Created by taushif on 26/02/2017.
  */
 import {observable, action} from 'mobx'
-import $ from 'jquery'
 
 export default class Prayers {
 
@@ -11,20 +10,25 @@ export default class Prayers {
 
     @action fetch() {
 
-        $.get('http://localhost:3000/today', (json) => {
-            this.items = json
-        })
-        .fail(function() {
-            alert( "error, kon gebedstijden niet ophalen" );
-        })
+        fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
+            .then(response => response.json())
+            .then(json => {
+                this.items = json
+            })
+            .catch(err => {
+                alert("error, kon gebedstijden niet ophalen")
+            })
     }
 
     @action fetchNext() {
-        $.get('http://localhost:3000/nextPrayer', (json) => {
-            this.nextPrayer = json.prayer
-        })
-        .fail(function() {
-            alert( "error, kon volgend gebed niet ophalen" );
-        })
+
+        fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
+            .then(response => response.json())
+            .then(json => {
+                this.nextPrayer = json.prayer
+            })
+            .catch(err => {
+                alert( "error, kon volgend gebed niet ophalen" )
+            })
     }
 }

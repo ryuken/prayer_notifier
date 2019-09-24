@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 
 import { withRouter } from "react-router"
 import {inject, observer} from 'mobx-react'
