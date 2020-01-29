@@ -5,30 +5,41 @@ import {observable, action} from 'mobx'
 
 export default class Prayers {
 
+    @observable errors = 0;
     @observable items = [];
     @observable nextPrayer = {}
 
-    @action fetch() {
+    @action fetch = () => {
 
-        fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
-            .then(response => response.json())
-            .then(json => {
-                this.items = json
-            })
-            .catch(err => {
-                alert("error, kon gebedstijden niet ophalen")
-            })
+	if(this.errors < 3) {
+
+		fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
+		    .then(response => response.json())
+		    .then(json => {
+				this.errors = 0
+				this.items = json
+		    })
+		    .catch(err => {
+				this.errors++
+				alert("error, kon gebedstijden niet ophalen")
+		    })
+		}
     }
 
-    @action fetchNext() {
+    @action fetchNext = () => {
 
-        fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
-            .then(response => response.json())
-            .then(json => {
-                this.nextPrayer = json.prayer
-            })
-            .catch(err => {
-                alert( "error, kon volgend gebed niet ophalen" )
-            })
+		if(this.errors < 3) {
+
+			fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
+				.then(response => response.json())
+				.then(json => {
+					this.errors = 0
+					this.nextPrayer = json.prayer
+				})
+				.catch(err => {
+					this.errors++
+					alert( "error, kon volgend gebed niet ophalen" )
+				})
+		}
     }
 }

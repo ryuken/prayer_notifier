@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { withRouter } from "react-router"
-import {inject, observer} from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 
 import Menu from '../components/Menu'
 
@@ -20,14 +20,14 @@ export default class App extends React.Component {
 
     componentDidMount() {
 
-        const {stores} = this.props
+        const { stores } = this.props
         stores.prayers.fetch()
         stores.config.fetch()
 
         this.changeBackground()
 
         this.setState({
-            poller : setInterval(function() {
+            poller : setInterval(() => {
                 stores.prayers.fetchNext()
             }, 1000)
         })
@@ -35,7 +35,7 @@ export default class App extends React.Component {
 
     changeBackground() {
 
-        const {backgrounds} = this.state
+        const { backgrounds } = this.state
 
         if(window.screen.width >= 800) {
 

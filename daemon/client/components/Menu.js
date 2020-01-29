@@ -3,14 +3,17 @@
  */
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import screenfull from "screenfull"
 import { Navbar, Nav, NavItem } from 'react-bootstrap'
 
-@inject("stores")
+@inject("stores") @observer
 export default class Menu extends Component {
 
     render() {
+
+	const { stores } = this.props
+
         return (
             <Navbar fixedTop fluid>
                 <Nav pullLeft>
@@ -27,8 +30,16 @@ export default class Menu extends Component {
                 </Nav>
 
                 <Nav pullRight>
+		    
+		    {stores.prayers.errors === 3 && (
+			<NavItem onClick={() => {
+                            stores.prayers.errors = 0
+                        }}>
+                            <span className="fa fa-plug inactive" />
+                        </NavItem>
+		    )}
                     <NavItem onClick={() => {
-                        if (screenfull.enabled) {
+                        if (screenfull.isEnabled) {
                             screenfull.toggle();
                         }
                     }}>

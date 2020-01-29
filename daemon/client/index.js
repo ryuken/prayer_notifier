@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import React, { Suspense } from 'react'
 import { render } from 'react-dom'
-import createBrowserHistory from 'history/createBrowserHistory'
+import { createBrowserHistory } from 'history'
 import { Provider } from 'mobx-react'
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router'
