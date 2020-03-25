@@ -37,7 +37,7 @@ type Item struct {
 	Midnight string
 }
 
-var Version = "1.9"
+var Version = "2.0"
 var Today Item
 
 func main() {
@@ -49,6 +49,13 @@ func main() {
 			Interval: 10 * time.Second,
 		},
 	})
+}
+
+func refresh() {
+
+	Download()
+	ParseToday()
+	loadToday()
 }
 
 func program(state overseer.State) {
@@ -71,14 +78,12 @@ func program(state overseer.State) {
 		Download()
 	})
 
-	Download()
-	ParseToday()
-	loadToday()
+	refresh()
 
 	//fmt.Println(Today)
 
 	daemon := cron.New()
-	daemon.AddFunc("@every 24h", Download)
+	daemon.AddFunc("@every 24h", refresh)
 	daemon.AddFunc("@daily", ParseToday)
 	daemon.AddFunc("@every 12h", loadToday)
 	daemon.AddFunc("@every 1m", check)
@@ -108,6 +113,8 @@ func program(state overseer.State) {
 
 	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
 	ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
+
+	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)))
 
 	ht.Get("/qm", alice.New(c.Handler).Then(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("xDGJGDx"))

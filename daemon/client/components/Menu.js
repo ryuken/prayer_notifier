@@ -31,13 +31,13 @@ export default class Menu extends Component {
 
                 <Nav pullRight>
 		    
-		    {stores.prayers.errors === 3 && (
-			<NavItem onClick={() => {
+                    {stores.prayers.errors === 3 && (
+                        <NavItem onClick={() => {
                             stores.prayers.errors = 0
                         }}>
                             <span className="fa fa-plug inactive" />
                         </NavItem>
-		    )}
+                    )}
                     <NavItem onClick={() => {
                         if (screenfull.isEnabled) {
                             screenfull.toggle();

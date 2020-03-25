@@ -56,6 +56,9 @@ func (w *compressResponseWriter) Flush() {
 
 // CompressHandler gzip compresses HTTP responses for clients that support it
 // via the 'Accept-Encoding' header.
+//
+// Compressing TLS traffic may leak the page contents to an attacker if the
+// page contains user input: http://security.stackexchange.com/a/102015/12208
 func CompressHandler(h http.Handler) http.Handler {
 	return CompressHandlerLevel(h, gzip.DefaultCompression)
 }
@@ -77,6 +80,7 @@ func CompressHandlerLevel(h http.Handler, level int) http.Handler {
 			switch strings.TrimSpace(enc) {
 			case "gzip":
 				w.Header().Set("Content-Encoding", "gzip")
+				r.Header.Del("Accept-Encoding")
 				w.Header().Add("Vary", "Accept-Encoding")
 
 				gw, _ := gzip.NewWriterLevel(w, level)
@@ -108,6 +112,7 @@ func CompressHandlerLevel(h http.Handler, level int) http.Handler {
 				break L
 			case "deflate":
 				w.Header().Set("Content-Encoding", "deflate")
+				r.Header.Del("Accept-Encoding")
 				w.Header().Add("Vary", "Accept-Encoding")
 
 				fw, _ := flate.NewWriter(w, level)

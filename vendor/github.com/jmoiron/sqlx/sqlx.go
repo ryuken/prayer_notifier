@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/jmoiron/sqlx/reflectx"
 )
@@ -30,8 +31,14 @@ var origMapper = reflect.ValueOf(NameMapper)
 // importers have time to customize the NameMapper.
 var mpr *reflectx.Mapper
 
+// mprMu protects mpr.
+var mprMu sync.Mutex
+
 // mapper returns a valid mapper using the configured NameMapper func.
 func mapper() *reflectx.Mapper {
+	mprMu.Lock()
+	defer mprMu.Unlock()
+
 	if mpr == nil {
 		mpr = reflectx.NewMapperFunc("db", NameMapper)
 	} else if origMapper != reflect.ValueOf(NameMapper) {
@@ -219,6 +226,14 @@ func (r *Row) Columns() ([]string, error) {
 		return []string{}, r.err
 	}
 	return r.rows.Columns()
+}
+
+// ColumnTypes returns the underlying sql.Rows.ColumnTypes(), or the deferred error
+func (r *Row) ColumnTypes() ([]*sql.ColumnType, error) {
+	if r.err != nil {
+		return []*sql.ColumnType{}, r.err
+	}
+	return r.rows.ColumnTypes()
 }
 
 // Err returns the error encountered while scanning.
@@ -456,8 +471,6 @@ func (tx *Tx) Stmtx(stmt interface{}) *Stmt {
 		s = v.Stmt
 	case *Stmt:
 		s = v.Stmt
-	case sql.Stmt:
-		s = &v
 	case *sql.Stmt:
 		s = v
 	default:
@@ -586,7 +599,7 @@ func (r *Rows) StructScan(dest interface{}) error {
 		return errors.New("must pass a pointer, not a value, to StructScan destination")
 	}
 
-	v = reflect.Indirect(v)
+	v = v.Elem()
 
 	if !r.started {
 		columns, err := r.Columns()
@@ -620,10 +633,14 @@ func (r *Rows) StructScan(dest interface{}) error {
 func Connect(driverName, dataSourceName string) (*DB, error) {
 	db, err := Open(driverName, dataSourceName)
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 	err = db.Ping()
-	return db, err
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
+	return db, nil
 }
 
 // MustConnect connects to a database and panics on error.

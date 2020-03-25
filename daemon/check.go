@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"regexp"
 	"time"
+	"net/http"
 
 	"github.com/spf13/viper"
 )
@@ -152,11 +153,7 @@ func play(player, action, id string) {
 	time.Sleep(3*time.Minute + 21*time.Second)
 
 	// stop playing
-	cmd = exec.Command("mpc", "stop")
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(err)
-	}
+	stop()
 	//fmt.Println("Stopped playing azan")
 
 	// clear temporary playlist
@@ -192,4 +189,24 @@ func play(player, action, id string) {
 		}
 		//fmt.Println("Seeked to original position")
 	}
+}
+
+// stop playing
+func stop() (error) {
+
+	cmd := exec.Command("mpc", "stop")
+	err := cmd.Start()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return err
+}
+
+func stopHTTP(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
+
+	err := stop()
+
+	return "json", err == nil, err
 }

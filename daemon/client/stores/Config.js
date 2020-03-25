@@ -49,4 +49,8 @@ export default class Config {
     @action fullscreen() {
         fetch('http://localhost:3000/fullscreen')
     }
+
+    @action stop() {
+        fetch('http://localhost:3000/stop')
+    }
 }

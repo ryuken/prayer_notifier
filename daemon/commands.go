@@ -20,4 +20,3 @@ func fullscreen(w http.ResponseWriter, r *http.Request) (string, interface{}, er
 
 	return "json", err == nil, err
 }
-

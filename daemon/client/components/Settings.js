@@ -11,7 +11,7 @@ import {inject, observer} from 'mobx-react'
 export default class Settings extends Component {
 
     setCity = (e) => {
-        
+
         const {stores} = this.props
         stores.config.City = e.target.innerHTML
 
@@ -27,6 +27,7 @@ export default class Settings extends Component {
     }
 
     render() {
+
         return (
             <Grid>
                 <Row>
@@ -52,6 +53,18 @@ export default class Settings extends Component {
                             <Button onClick={this.setBrightness.bind(this, 150)}>150</Button>
                             <Button onClick={this.setBrightness.bind(this, 200)}>200</Button>
                             <Button onClick={this.setBrightness.bind(this, 255)}>255</Button>
+                        </ButtonGroup>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col xs={12}>
+                        <h3>Media control</h3>
+
+                        <ButtonGroup bsSize="large">
+                            <Button onClick={() => this.props.stores.config.stop()}>
+                                <i className="fa fa-stop" />
+                            </Button>
                         </ButtonGroup>
                     </Col>
                 </Row>
