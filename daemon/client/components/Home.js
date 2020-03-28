@@ -82,7 +82,7 @@ export default class Home extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-xs-2">
-                        <img src="/img/mosque.png" style={{ width: "50px", height: "50px" }} />
+                        <img src="img/mosque.png" style={{ width: "50px", height: "50px" }} />
                     </div>
                     <div className="col-xs-10 text-center">
                         <h2 className="no-margin" style={{ marginBottom : "10px", marginTop : "10px" }}>

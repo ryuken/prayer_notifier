@@ -11,10 +11,10 @@ export default class App extends React.Component {
     state = {
         poller : null,
         backgrounds : [
-            '/img/backgrounds/islamic_wallpaper_2.jpg',
-            '/img/backgrounds/islamic_wallpaper_3.jpg',
-            '/img/backgrounds/islamic_wallpaper_10.jpg',
-            '/img/backgrounds/bismillah.jpg',
+            'img/backgrounds/islamic_wallpaper_2.jpg',
+            'img/backgrounds/islamic_wallpaper_3.jpg',
+            'img/backgrounds/islamic_wallpaper_10.jpg',
+            'img/backgrounds/bismillah.jpg',
         ]
     }
 

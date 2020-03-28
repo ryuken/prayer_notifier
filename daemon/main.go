@@ -37,7 +37,7 @@ type Item struct {
 	Midnight string
 }
 
-var Version = "2.0"
+var Version = "2.1"
 var Today Item
 
 func main() {
@@ -91,7 +91,8 @@ func program(state overseer.State) {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
-		AllowedHeaders: []string{"GET", "POST"},
+		AllowedHeaders: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "HEAD", "OPTIONS"},
 	})
 
 	ht := tools.HttpTool{}
@@ -112,7 +113,8 @@ func program(state overseer.State) {
 	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)))
 
 	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
-	ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
+	//ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
+	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
 
 	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)))
 
