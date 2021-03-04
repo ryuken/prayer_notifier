@@ -13,15 +13,14 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"sync"
 	"syscall"
 	"time"
-
-	"github.com/kardianos/osext"
 )
 
-var tmpBinPath = filepath.Join(os.TempDir(), "overseer-"+token())
+var tmpBinPath = filepath.Join(os.TempDir(), "overseer-"+token()+extension())
 
 //a overseer master process
 type master struct {
@@ -67,7 +66,7 @@ func (mp *master) run() error {
 
 func (mp *master) checkBinary() error {
 	//get path to binary and confirm its writable
-	binPath, err := osext.Executable()
+	binPath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to find binary path (%s)", err)
 	}
@@ -90,11 +89,13 @@ func (mp *master) checkBinary() error {
 	mp.binHash = hash.Sum(nil)
 	f.Close()
 	//test bin<->tmpbin moves
-	if err := move(tmpBinPath, mp.binPath); err != nil {
-		return fmt.Errorf("cannot move binary (%s)", err)
-	}
-	if err := move(mp.binPath, tmpBinPath); err != nil {
-		return fmt.Errorf("cannot move binary back (%s)", err)
+	if mp.Config.Fetcher != nil {
+		if err := move(tmpBinPath, mp.binPath); err != nil {
+			return fmt.Errorf("cannot move binary (%s)", err)
+		}
+		if err := move(mp.binPath, tmpBinPath); err != nil {
+			return fmt.Errorf("cannot move binary back (%s)", err)
+		}
 	}
 	return nil
 }
@@ -116,7 +117,7 @@ func (mp *master) setupSignalling() {
 func (mp *master) handleSignal(s os.Signal) {
 	if s == mp.RestartSignal {
 		//user initiated manual restart
-		mp.triggerRestart()
+		go mp.triggerRestart()
 	} else if s.String() == "child exited" {
 		// will occur on every restart, ignore it
 	} else
@@ -269,7 +270,8 @@ func (mp *master) fetch() {
 	//overseer sanity check, dont replace our good binary with a non-executable file
 	tokenIn := token()
 	cmd := exec.Command(tmpBinPath)
-	cmd.Env = []string{envBinCheck + "=" + tokenIn}
+	cmd.Env = append(os.Environ(), []string{envBinCheck + "=" + tokenIn}...)
+	cmd.Args = os.Args
 	returned := false
 	go func() {
 		time.Sleep(5 * time.Second)
@@ -291,7 +293,7 @@ func (mp *master) fetch() {
 		return
 	}
 	//overwrite!
-	if err := move(mp.binPath, tmpBinPath); err != nil {
+	if err := overwrite(mp.binPath, tmpBinPath); err != nil {
 		mp.warnf("failed to overwrite binary: %s", err)
 		return
 	}
@@ -391,7 +393,7 @@ func (mp *master) fork() error {
 		}
 		mp.debugf("prog exited with %d", code)
 		//if a restarts are disabled or if it was an
-		//unexpected creash, proxy this exit straight
+		//unexpected crash, proxy this exit straight
 		//through to the main process
 		if mp.NoRestart || !mp.restarting {
 			os.Exit(code)
@@ -424,4 +426,13 @@ func token() string {
 	buff := make([]byte, 8)
 	rand.Read(buff)
 	return hex.EncodeToString(buff)
+}
+
+// On Windows, include the .exe extension, noop otherwise.
+func extension() string {
+	if runtime.GOOS == "windows" {
+		return ".exe"
+	}
+
+	return ""
 }

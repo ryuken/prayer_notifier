@@ -18,7 +18,11 @@ export default class Clock extends React.Component {
 
         this.setState({
             clock : setInterval(() => {
-                this.setState({ now: getTime() })
+                
+                let time = getTime()
+
+                if(time != this.state.now)
+                    this.setState({ now: time })
             }, 1000)
         })
     }

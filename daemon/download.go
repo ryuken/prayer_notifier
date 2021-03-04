@@ -17,7 +17,7 @@ func Download() {
 		return
 	}
 
-	robots, err := ioutil.ReadAll(res.Body)
+	city, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 
 	if err != nil {
@@ -25,7 +25,7 @@ func Download() {
 		return
 	}
 
-	err = ioutil.WriteFile("city.json", robots, 0665)
+	err = ioutil.WriteFile("city.json", city, 0665)
 
 	if err != nil {
 		log.Println(err)

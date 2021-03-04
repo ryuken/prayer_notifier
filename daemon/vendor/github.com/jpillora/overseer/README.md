@@ -1,6 +1,6 @@
 # overseer
 
-[![GoDoc](https://godoc.org/github.com/jpillora/overseer?status.svg)](https://godoc.org/github.com/jpillora/overseer)
+[![GoDoc](https://godoc.org/github.com/jpillora/overseer?status.svg)](https://godoc.org/github.com/jpillora/overseer)   [![Tests](https://github.com/jpillora/overseer/workflows/Tests/badge.svg)](https://github.com/jpillora/overseer/actions?workflow=Tests)
 
 `overseer` is a package for creating monitorable, gracefully restarting, self-upgrading binaries in Go (golang). The main goal of this project is to facilitate the creation of self-upgrading binaries which play nice with standard process managers, secondly it should expose a small and simple API with reasonable defaults.
 
@@ -11,7 +11,7 @@ Commonly, graceful restarts are performed by the active process (*dark blue*) cl
 ### Features
 
 * Simple
-* Works with process managers
+* Works with process managers (systemd, upstart, supervisor, etc)
 * Graceful, zero-down time restarts
 * Easy self-upgrading binaries
 
@@ -77,110 +77,96 @@ See [Config](https://godoc.org/github.com/jpillora/overseer#Config)uration optio
 
 ### More examples
 
-* See the [example/](example/) directory and run `example.sh`, you should see the following output:
+See the [example/](example/) directory and run `example.sh`, you should see the following output:
 
-	```sh
-	$ cd example/
-	$ sh example.sh
-	serving . on port 5002
-	BUILT APP (1)
-	RUNNING APP
-	app#1 (1cd8b9928d44b0a6e89df40574b8b6d20a417679) listening...
-	app#1 (1cd8b9928d44b0a6e89df40574b8b6d20a417679) says hello
-	app#1 (1cd8b9928d44b0a6e89df40574b8b6d20a417679) says hello
-	BUILT APP (2)
-	app#2 (b9b251f1be6d0cc423ef921f107cb4fc52f760b3) listening...
-	app#2 (b9b251f1be6d0cc423ef921f107cb4fc52f760b3) says hello
-	app#2 (b9b251f1be6d0cc423ef921f107cb4fc52f760b3) says hello
-	app#1 (1cd8b9928d44b0a6e89df40574b8b6d20a417679) says hello
-	app#1 (1cd8b9928d44b0a6e89df40574b8b6d20a417679) exiting...
-	BUILT APP (3)
-	app#3 (248f80ea049c835e7e3714b7169c539d3a4d6131) listening...
-	app#3 (248f80ea049c835e7e3714b7169c539d3a4d6131) says hello
-	app#3 (248f80ea049c835e7e3714b7169c539d3a4d6131) says hello
-	app#2 (b9b251f1be6d0cc423ef921f107cb4fc52f760b3) says hello
-	app#2 (b9b251f1be6d0cc423ef921f107cb4fc52f760b3) exiting...
-	app#3 (248f80ea049c835e7e3714b7169c539d3a4d6131) says hello
-	```
+```sh
+$ cd example/
+$ sh example.sh
+BUILT APP (1)
+RUNNING APP
+app#1 (c7940a5bfc3f0e8633d3bf775f54bb59f50b338e) listening...
+app#1 (c7940a5bfc3f0e8633d3bf775f54bb59f50b338e) says hello
+app#1 (c7940a5bfc3f0e8633d3bf775f54bb59f50b338e) says hello
+BUILT APP (2)
+app#2 (3dacb8bc673c1b4d38f8fb4fad5b017671aa8a67) listening...
+app#2 (3dacb8bc673c1b4d38f8fb4fad5b017671aa8a67) says hello
+app#2 (3dacb8bc673c1b4d38f8fb4fad5b017671aa8a67) says hello
+app#1 (c7940a5bfc3f0e8633d3bf775f54bb59f50b338e) says hello
+app#1 (c7940a5bfc3f0e8633d3bf775f54bb59f50b338e) exiting...
+BUILT APP (3)
+app#3 (b7614e7ff42eed8bb334ed35237743b0e4041678) listening...
+app#3 (b7614e7ff42eed8bb334ed35237743b0e4041678) says hello
+app#3 (b7614e7ff42eed8bb334ed35237743b0e4041678) says hello
+app#2 (3dacb8bc673c1b4d38f8fb4fad5b017671aa8a67) says hello
+app#2 (3dacb8bc673c1b4d38f8fb4fad5b017671aa8a67) exiting...
+app#3 (b7614e7ff42eed8bb334ed35237743b0e4041678) says hello
+```
 
-	**Note:** `app#1` stays running until the last request is closed.
+**Note:** `app#1` stays running until the last request is closed.
 
-* Only use graceful restarts:
+#### Only use graceful restarts
 
-	```go
-	func main() {
-		overseer.Run(overseer.Config{
-			Program: prog,
-			Address: ":3000",
-		})
-	}
-	```
+```go
+func main() {
+	overseer.Run(overseer.Config{
+		Program: prog,
+		Address: ":3000",
+	})
+}
+```
 
-	Send `main` a `SIGUSR2` (`Config.RestartSignal`) to manually trigger a restart
+Send `main` a `SIGUSR2` (`Config.RestartSignal`) to manually trigger a restart
 
-* Only use auto-upgrades, no restarts
+#### Only use auto-upgrades, no restarts
 
-	```go
-	func main() {
-		overseer.Run(overseer.Config{
-			Program: prog,
-			NoRestart: true,
-			Fetcher: &fetcher.HTTP{
-				URL:      "http://localhost:4000/binaries/myapp",
-				Interval: 1 * time.Second,
-			},
-		})
-	}
-	```
+```go
+func main() {
+	overseer.Run(overseer.Config{
+		Program: prog,
+		NoRestart: true,
+		Fetcher: &fetcher.HTTP{
+			URL:      "http://localhost:4000/binaries/myapp",
+			Interval: 1 * time.Second,
+		},
+	})
+}
+```
 
-	Your binary will be upgraded though it will require manual restart from the user, suitable for creating self-upgrading command-line applications.
+Your binary will be upgraded though it will require manual restart from the user, suitable for creating self-upgrading command-line applications.
 
-* Multi-platform binaries using a dynamic fetch `URL`
+#### Multi-platform binaries using a dynamic fetch `URL`
 
-	```go
-	func main() {
-		overseer.Run(overseer.Config{
-			Program: prog,
-			Fetcher: &fetcher.HTTP{
-				URL: "http://localhost:4000/binaries/app-"+runtime.GOOS+"-"+runtime.GOARCH,
-				//e.g.http://localhost:4000/binaries/app-linux-amd64
-			},
-		})
-	}
-	```
+```go
+func main() {
+	overseer.Run(overseer.Config{
+		Program: prog,
+		Fetcher: &fetcher.HTTP{
+			URL: "http://localhost:4000/binaries/app-"+runtime.GOOS+"-"+runtime.GOARCH,
+			//e.g.http://localhost:4000/binaries/app-linux-amd64
+		},
+	})
+}
+```
 
 ### Known issues
 
 * The master process's `overseer.Config` cannot be changed via an upgrade, the master process must be restarted.
 	* Therefore, `Addresses` can only be changed by restarting the main process.
 * Currently shells out to `mv` for moving files because `mv` handles cross-partition moves unlike `os.Rename`.
-* Only supported on darwin and linux.
 * Package `init()` functions will run twice on start, once in the main process and once in the child process.
 
 ### More documentation
 
 * [Core `overseer` package](https://godoc.org/github.com/jpillora/overseer)
 * [Common `fetcher.Interface`](https://godoc.org/github.com/jpillora/overseer/fetcher#Interface)
-	* [HTTP fetcher type](https://godoc.org/github.com/jpillora/overseer/fetcher#HTTP)
-	* [S3 fetcher type](https://godoc.org/github.com/jpillora/overseer/fetcher#S3)
+	* [File fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#File)
+	* [HTTP fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#HTTP)
+	* [S3 fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#S3)
+	* [Github fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#Github)
 
 ### Third-party Fetchers
 
 * [overseer-bindiff](https://github.com/tgulacsi/overseer-bindiff) A binary diff fetcher and builder
-
-### Docker
-
-1. Compile your `overseer`able `app` to a `/path/on/docker/host/dir/app`
-1. Then run it with:
-
-	```sh
-	#run the app inside a standard Debian container
-	docker run -d -v /path/on/docker/host/dir/:/home/ -w /home/ debian /home/app
-	```
-
-1. For testing, swap out `-d` (daemonize) for `--rm -it` (remove on exit, input, terminal)
-1. `app` should mount its parent directory as a volume in order to store the latest binaries on the host
-1. If the OS doesn't ship with TLS certs, you can mount them from the host with `-v /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt`
 
 ### Contributing
 

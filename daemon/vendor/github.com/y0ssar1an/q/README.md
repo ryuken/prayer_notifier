@@ -1,7 +1,8 @@
 # q
-[![Build Status](https://travis-ci.org/y0ssar1an/q.svg?branch=develop)](https://travis-ci.org/y0ssar1an/q)
-[![GoDoc](https://godoc.org/github.com/y0ssar1an/q?status.svg)](https://godoc.org/github.com/y0ssar1an/q)
-[![Go Report Card](https://goreportcard.com/badge/github.com/y0ssar1an/q)](https://goreportcard.com/report/github.com/y0ssar1an/q)
+
+[![CircleCI](https://circleci.com/gh/ryboe/q/tree/master.svg?style=svg)](https://circleci.com/gh/ryboe/q/tree/master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ryboe/q)](https://goreportcard.com/report/github.com/ryboe/q)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/ryboe/q)](https://pkg.go.dev/github.com/ryboe/q)
 
 q is a better way to do print statement debugging.
 
@@ -20,44 +21,58 @@ Type `q.Q` instead of `fmt.Printf` and your variables will be printed like this:
 ## Basic Usage
 
 ```go
-import "github.com/y0ssar1an/q"
+import "q"
 ...
 q.Q(a, b, c)
-```
-```go
-// Alternatively, use the . import and you can omit the package name.
-import . "github.com/y0ssar1an/q"
-...
-Q(a, b, c)
 ```
 
 For best results, dedicate a terminal to tailing `$TMPDIR/q` while you work.
 
 ## Install
+
 ```sh
-go get -u github.com/y0ssar1an/q
+git clone https://github.com/ryboe/q $GOPATH/src/q
 ```
 
 Put these functions in your shell config. Typing `qq` or `rmqq` will then start
 tailing `$TMPDIR/q`.
+
 ```sh
 qq() {
     clear
-    local gpath="${GOPATH:-$HOME/go}"
-    "${gpath%%:*}/src/github.com/y0ssar1an/q/q.sh" "$@"
+
+    logpath="$TMPDIR/q"
+    if [[ -z "$TMPDIR" ]]; then
+        logpath="/tmp/q"
+    fi
+
+    if [[ ! -f "$logpath" ]]; then
+        echo 'Q LOG' > "$logpath"
+    fi
+
+    tail -100f -- "$logpath"
 }
+
 rmqq() {
-    if [[ -f "$TMPDIR/q" ]]; then
-        rm "$TMPDIR/q"
+    logpath="$TMPDIR/q"
+    if [[ -z "$TMPDIR" ]]; then
+        logpath="/tmp/q"
+    fi
+    if [[ -f "$logpath" ]]; then
+        rm "$logpath"
     fi
     qq
 }
 ```
 
+You also can simply `tail -f $TMPDIR/q`, but it's highly recommended to use the above commands.
+
 ## Editor Integration
 
-#### VS Code
+### VS Code
+
 `Preferences > User Snippets > Go`
+
 ```json
 "qq": {
     "prefix": "qq",
@@ -66,8 +81,10 @@ rmqq() {
 }
 ```
 
-#### Sublime Text
+### Sublime Text
+
 `Tools > Developer > New Snippet`
+
 ```xml
 <snippet>
     <content><![CDATA[
@@ -78,8 +95,10 @@ q.Q($1) // DEBUG
 </snippet>
 ```
 
-#### Atom
+### Atom
+
 `Atom > Open Your Snippets`
+
 ```coffee
 '.source.go':
     'qq':
@@ -87,10 +106,37 @@ q.Q($1) // DEBUG
         'body': 'q.Q($1) // DEBUG'
 ```
 
-#### vim/Emacs
+### JetBrains GoLand
+
+`Settings > Editor > Live Templates`
+
+In `Go`, add a new template with:
+
+* Abbreviation: `qq`
+* Description: `Pretty-print to $TMPDIR/q`
+* Template text: `q.Q($END$) // DEBUG`
+* Applicable in: select the `Go` scope
+
+### Emacs
+
+Add a new snippet file to the go-mode snippets directory
+(`$HOME/.emacs.d/snippets/go-mode/qq`). This should
+contain:
+
+```emacs
+# -*- mode: snippet -*-
+# name: qq
+# key: qq
+# --
+q.Q(${1:...}) // DEBUG
+```
+
+### vim
+
 TBD Send me a PR, please :)
 
 ## Haven't I seen this somewhere before?
+
 Python programmers will recognize this as a Golang port of the
 [`q` module by zestyping](https://github.com/zestyping/q).
 
@@ -102,7 +148,9 @@ PyCon 2013. Watch it! It's funny :)
 ## FAQ
 
 ### Why `q.Q`?
+
 It's quick to type and unlikely to cause naming collisions.
 
 ### Is `q.Q()` safe for concurrent use?
+
 Yes.

@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"syscall"
 	"time"
 )
 
@@ -18,6 +17,7 @@ var (
 	DisabledState = State{Enabled: false}
 )
 
+// State contains the current run-time state of overseer
 type State struct {
 	//whether overseer is running enabled. When enabled,
 	//this program will be running in a child process and
@@ -75,26 +75,6 @@ func (sp *slave) run() error {
 	//run program with state
 	sp.debugf("start program")
 	sp.Config.Program(sp.state)
-	return nil
-}
-
-func (sp *slave) watchParent() error {
-	sp.masterPid = os.Getppid()
-	proc, err := os.FindProcess(sp.masterPid)
-	if err != nil {
-		return fmt.Errorf("master process: %s", err)
-	}
-	sp.masterProc = proc
-	go func() {
-		//send signal 0 to master process forever
-		for {
-			//should not error as long as the process is alive
-			if err := sp.masterProc.Signal(syscall.Signal(0)); err != nil {
-				os.Exit(1)
-			}
-			time.Sleep(2 * time.Second)
-		}
-	}()
 	return nil
 }
 

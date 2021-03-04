@@ -37,7 +37,7 @@ type Item struct {
 	Midnight string
 }
 
-var Version = "2.1"
+var Version = "2.2"
 var Today Item
 
 func main() {
@@ -98,34 +98,27 @@ func program(state overseer.State) {
 	ht := tools.HttpTool{}
 	ht.Init()
 
-	index := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./public/index.html")
-		q.Q(r.URL.Path)
-	})
+	ht.Get("/brightness", alice.New(c.Handler).Then(tools.AppHandler(brightness)), nil)
+	ht.Get("/fullscreen", alice.New(c.Handler).Then(tools.AppHandler(fullscreen)), nil)
 
-	ht.Get("/settings", index)
-	ht.Get("/clock", index)
+	ht.Get("/today", alice.New(c.Handler).Then(http.HandlerFunc(todayRead)), nil)
+	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)), nil)
 
-	ht.Get("/brightness", alice.New(c.Handler).Then(tools.AppHandler(brightness)))
-	ht.Get("/fullscreen", alice.New(c.Handler).Then(tools.AppHandler(fullscreen)))
+	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)), nil)
+	//ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)), nil)
+	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)), nil)
 
-	ht.Get("/today", alice.New(c.Handler).Then(http.HandlerFunc(todayRead)))
-	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)))
-
-	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
-	//ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
-	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
-
-	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)))
+	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)), nil)
 
 	ht.Get("/qm", alice.New(c.Handler).Then(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("xDGJGDx"))
-	})))
+	})), nil)
+
+	ht.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
+
+	http.Handle("/", ht.Router)
 
 	ht.Route(state.Listener, nil)
-
-	//ht.Router.PathPrefix("/").Handler(nocache(gziphandler.GzipHandler(http.FileServer(http.Dir("./public/")))))
-	http.Handle("/", ht.Router)
 }
 
 func loadToday() {
