@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build ignore
 // +build ignore
 
 /*
@@ -15,7 +16,7 @@ package unix
 
 /*
 #define __DARWIN_UNIX03 0
-#define KERNEL
+#define KERNEL 1
 #define _DARWIN_USE_64_BIT_INODE
 #include <dirent.h>
 #include <fcntl.h>
@@ -26,6 +27,7 @@ package unix
 #include <mach/mach.h>
 #include <mach/message.h>
 #include <sys/event.h>
+#include <sys/ipc.h>
 #include <sys/kern_control.h>
 #include <sys/mman.h>
 #include <sys/mount.h>
@@ -33,15 +35,19 @@ package unix
 #include <sys/ptrace.h>
 #include <sys/resource.h>
 #include <sys/select.h>
+#include <sys/shm.h>
 #include <sys/signal.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/sysctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/ucred.h>
 #include <sys/uio.h>
 #include <sys/un.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
+#include <sys/vsock.h>
 #include <net/bpf.h>
 #include <net/if.h>
 #include <net/if_dl.h>
@@ -148,13 +154,29 @@ type RawSockaddrAny C.struct_sockaddr_any
 
 type RawSockaddrCtl C.struct_sockaddr_ctl
 
+type RawSockaddrVM C.struct_sockaddr_vm
+
+type XVSockPCB C.struct_xvsockpcb
+
+type XSocket C.struct_xsocket
+
+type XSocket64 C.struct_xsocket64
+
+type XSockbuf C.struct_xsockbuf
+
+type XVSockPgen C.struct_xvsockpgen
+
 type _Socklen C.socklen_t
+
+type Xucred C.struct_xucred
 
 type Linger C.struct_linger
 
 type Iovec C.struct_iovec
 
 type IPMreq C.struct_ip_mreq
+
+type IPMreqn C.struct_ip_mreqn
 
 type IPv6Mreq C.struct_ipv6_mreq
 
@@ -177,9 +199,16 @@ const (
 	SizeofSockaddrUnix     = C.sizeof_struct_sockaddr_un
 	SizeofSockaddrDatalink = C.sizeof_struct_sockaddr_dl
 	SizeofSockaddrCtl      = C.sizeof_struct_sockaddr_ctl
+	SizeofSockaddrVM       = C.sizeof_struct_sockaddr_vm
+	SizeofXvsockpcb        = C.sizeof_struct_xvsockpcb
+	SizeofXSocket          = C.sizeof_struct_xsocket
+	SizeofXSockbuf         = C.sizeof_struct_xsockbuf
+	SizeofXVSockPgen       = C.sizeof_struct_xvsockpgen
+	SizeofXucred           = C.sizeof_struct_xucred
 	SizeofLinger           = C.sizeof_struct_linger
 	SizeofIovec            = C.sizeof_struct_iovec
 	SizeofIPMreq           = C.sizeof_struct_ip_mreq
+	SizeofIPMreqn          = C.sizeof_struct_ip_mreqn
 	SizeofIPv6Mreq         = C.sizeof_struct_ipv6_mreq
 	SizeofMsghdr           = C.sizeof_struct_msghdr
 	SizeofCmsghdr          = C.sizeof_struct_cmsghdr
@@ -296,3 +325,44 @@ type Clockinfo C.struct_clockinfo
 // ctl_info
 
 type CtlInfo C.struct_ctl_info
+
+// KinfoProc
+
+const SizeofKinfoProc = C.sizeof_struct_kinfo_proc
+
+type Eproc C.struct_eproc
+
+type ExternProc C.struct_extern_proc
+
+type Itimerval C.struct_itimerval
+
+type KinfoProc C.struct_kinfo_proc
+
+type Vmspace C.struct_vmspace
+
+type Pcred C.struct__pcred
+
+type Ucred C.struct__ucred
+
+// shm
+
+type SysvIpcPerm C.struct_ipc_perm
+type SysvShmDesc C.struct_shmid_ds
+
+const (
+	IPC_CREAT   = C.IPC_CREAT
+	IPC_EXCL    = C.IPC_EXCL
+	IPC_NOWAIT  = C.IPC_NOWAIT
+	IPC_PRIVATE = C.IPC_PRIVATE
+)
+
+const (
+	IPC_RMID = C.IPC_RMID
+	IPC_SET  = C.IPC_SET
+	IPC_STAT = C.IPC_STAT
+)
+
+const (
+	SHM_RDONLY = C.SHM_RDONLY
+	SHM_RND    = C.SHM_RND
+)

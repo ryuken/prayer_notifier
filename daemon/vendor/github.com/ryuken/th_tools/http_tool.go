@@ -8,94 +8,51 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
 	//"github.com/nytimes/gziphandler"
 	"net"
 )
 
 type HttpTool struct {
 	Methods map[string]map[string]http.Handler
-    Router *mux.Router
+	Router  *mux.Router
 }
 
 func (ht *HttpTool) Init() {
-    ht.Router = mux.NewRouter()
+	ht.Router = mux.NewRouter()
 	ht.Methods = make(map[string]map[string]http.Handler)
 }
 
-func (ht *HttpTool) Get(route string, handler http.Handler, logFile io.Writer) {
-	
-	method := "GET"
-
-	if ht.Methods[method] == nil {
-		ht.Methods[method] = make(map[string]http.Handler)
+func (ht *HttpTool) Get(route string, handler http.Handler) {
+	if ht.Methods["GET"] == nil {
+		ht.Methods["GET"] = make(map[string]http.Handler)
 	}
 
-	ht.Methods[method][route] = handler
-
-	fmt.Println(method, route)
-
-	if logFile != nil {
-		ht.Router.Handle(route, handlers.LoggingHandler(logFile, ht.Methods[method][route])).Methods(method)
-	} else {
-		ht.Router.Handle(route, ht.Methods[method][route]).Methods(method)
-	}
+	ht.Methods["GET"][route] = handler
 }
 
-func (ht *HttpTool) Post(route string, handler http.Handler, logFile io.Writer) {
-	
-	method := "POST"
-
-	if ht.Methods[method] == nil {
-		ht.Methods[method] = make(map[string]http.Handler)
+func (ht *HttpTool) Post(route string, handler http.Handler) {
+	if ht.Methods["POST"] == nil {
+		ht.Methods["POST"] = make(map[string]http.Handler)
 	}
 
-	ht.Methods[method][route] = handler
-
-	fmt.Println(method, route)
-
-	if logFile != nil {
-		ht.Router.Handle(route, handlers.LoggingHandler(logFile, ht.Methods[method][route])).Methods(method)
-	} else {
-		ht.Router.Handle(route, ht.Methods[method][route]).Methods(method)
-	}
+	ht.Methods["POST"][route] = handler
 }
 
-func (ht *HttpTool) Put(route string, handler http.Handler, logFile io.Writer) {
-	
-	method := "PUT"
-
-	if ht.Methods[method] == nil {
-		ht.Methods[method] = make(map[string]http.Handler)
+func (ht *HttpTool) Put(route string, handler http.Handler) {
+	if ht.Methods["PUT"] == nil {
+		ht.Methods["PUT"] = make(map[string]http.Handler)
 	}
 
-	ht.Methods[method][route] = handler
-
-	fmt.Println(method, route)
-
-	if logFile != nil {
-		ht.Router.Handle(route, handlers.LoggingHandler(logFile, ht.Methods[method][route])).Methods(method)
-	} else {
-		ht.Router.Handle(route, ht.Methods[method][route]).Methods(method)
-	}
+	ht.Methods["PUT"][route] = handler
 }
 
-func (ht *HttpTool) Delete(route string, handler http.Handler, logFile io.Writer) {
-	
-	method := "DELETE"
-
-	if ht.Methods[method] == nil {
-		ht.Methods[method] = make(map[string]http.Handler)
+func (ht *HttpTool) Delete(route string, handler http.Handler) {
+	if ht.Methods["DELETE"] == nil {
+		ht.Methods["DELETE"] = make(map[string]http.Handler)
 	}
 
-	ht.Methods[method][route] = handler
-
-	fmt.Println(method, route)
-
-	if logFile != nil {
-		ht.Router.Handle(route, handlers.LoggingHandler(logFile, ht.Methods[method][route])).Methods(method)
-	} else {
-		ht.Router.Handle(route, ht.Methods[method][route]).Methods(method)
-	}
+	ht.Methods["DELETE"][route] = handler
 }
 
 func (ht *HttpTool) Handle(route string, handler http.Handler) {
@@ -145,7 +102,7 @@ func (ht HttpTool) Route(listener net.Listener, logFile io.Writer) {
 	// 	}
 	// 	return http.HandlerFunc(fn)
 	// }
-    //
+	//
 	// ht.Router.PathPrefix("/").Handler(nocache(gziphandler.GzipHandler(http.FileServer(http.Dir("./public/")))))
 	// http.Handle("/", ht.Router)
 

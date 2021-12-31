@@ -60,7 +60,7 @@ func argNames(filename string, line int) ([]string, error) {
 	}
 
 	var names []string
-	ast.Inspect(f, func(n ast.Node) bool { // nolint: unparam
+	ast.Inspect(f, func(n ast.Node) bool {
 		call, is := n.(*ast.CallExpr)
 		if !is {
 			// The node is not a function call.
@@ -124,7 +124,7 @@ func exprToString(arg ast.Expr) string {
 
 	// CallExpr will be multi-line and indented with tabs. replace tabs with
 	// spaces so we can better control formatting during output().
-	return strings.Replace(buf.String(), "\t", "    ", -1)
+	return strings.ReplaceAll(buf.String(), "\t", "    ")
 }
 
 // formatArgs converts the given args to pretty-printed, colorized strings.

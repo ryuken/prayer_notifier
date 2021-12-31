@@ -18,7 +18,6 @@ import (
 
 	"github.com/jpillora/overseer"
 	"github.com/jpillora/overseer/fetcher"
-	"github.com/y0ssar1an/q"
 )
 
 type Config struct {
@@ -98,23 +97,23 @@ func program(state overseer.State) {
 	ht := tools.HttpTool{}
 	ht.Init()
 
-	ht.Get("/brightness", alice.New(c.Handler).Then(tools.AppHandler(brightness)), nil)
-	ht.Get("/fullscreen", alice.New(c.Handler).Then(tools.AppHandler(fullscreen)), nil)
+	ht.Get("/brightness", alice.New(c.Handler).Then(tools.AppHandler(brightness)))
+	ht.Get("/fullscreen", alice.New(c.Handler).Then(tools.AppHandler(fullscreen)))
 
-	ht.Get("/today", alice.New(c.Handler).Then(http.HandlerFunc(todayRead)), nil)
-	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)), nil)
+	ht.Get("/today", alice.New(c.Handler).Then(http.HandlerFunc(todayRead)))
+	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)))
 
-	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)), nil)
+	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
 	//ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)), nil)
-	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)), nil)
+	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
 
-	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)), nil)
+	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)))
 
 	ht.Get("/qm", alice.New(c.Handler).Then(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("xDGJGDx"))
-	})), nil)
+	})))
 
-	ht.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
+	//ht.Router.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 
 	http.Handle("/", ht.Router)
 

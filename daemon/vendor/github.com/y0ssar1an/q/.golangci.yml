@@ -1,18 +1,33 @@
 run:
-  modules-download-mode: vendor
+  # modules-download-mode: vendor
   tests: true
   timeout: 1m
 
 linters:
   enable-all: true
   disable:
+    - exhaustivestruct
+    - forbidigo # we need to use fmt.Print*()
+    - interfacer # deprecated
+    - golint # deprecated
     - gomnd
-    - testpackage
+    - maligned # deprecated
     - nolintlint
+    - paralleltest # tests only take 2.5s to run. no need to parallelize
+    - scopelint # deprecated
+    - testpackage
     - wsl
 
 linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - whyNoLint
   gocyclo:
-    min-complexity: 11
+    min-complexity: 10
   gofmt:
     simplify: true

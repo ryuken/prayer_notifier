@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/ryboe/q/tree/master.svg?style=svg)](https://circleci.com/gh/ryboe/q/tree/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ryboe/q)](https://goreportcard.com/report/github.com/ryboe/q)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/ryboe/q)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/ryboe/q)](https://pkg.go.dev/github.com/ryboe/q)
 
 q is a better way to do print statement debugging.
@@ -31,7 +32,7 @@ For best results, dedicate a terminal to tailing `$TMPDIR/q` while you work.
 ## Install
 
 ```sh
-git clone https://github.com/ryboe/q $GOPATH/src/q
+git clone https://github.com/ryboe/q "$(go env GOPATH)"/src/q
 ```
 
 Put these functions in your shell config. Typing `qq` or `rmqq` will then start
