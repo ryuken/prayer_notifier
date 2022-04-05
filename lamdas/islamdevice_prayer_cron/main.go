@@ -3,29 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
-	"regexp"
-	"strings"
 	"time"
 
-	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/tidwall/gjson"
+	runtime "github.com/aws/aws-lambda-go/lambda"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	graphql "github.com/hasura/go-graphql-client"
 )
 
-type City struct {
-	Name    string
-	Country string
+var query struct {
+	GetPrayerTimesV2 struct {
+		Times []struct {
+			Day      graphql.Int
+			Month    graphql.Int
+			Fadjr    graphql.String
+			Dhoehr   graphql.String
+			Maghrib  graphql.String
+			Ishaa    graphql.String
+			Shoeroeq graphql.String
+			Year     graphql.Int
+			Asr      graphql.String
+		}
+	} `graphql:"getPrayerTimesV2(id: $cityId)"`
 }
 
-func HandleRequest(ctx context.Context) (string, error) {
-
-	now := time.Now()
+func handleRequest(ctx context.Context) (string, error) {
 
 	// Set client options
 	clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
@@ -46,92 +51,46 @@ func HandleRequest(ctx context.Context) (string, error) {
 
 	fmt.Println("Connected to MongoDB!")
 
-	var cities []City
-	cityCollection := client.Database("islamdevice").Collection("cities")
 	prayerCollection := client.Database("islamdevice").Collection("prayers")
 
-	cur, err := cityCollection.Find(ctx, bson.D{})
+	// Den Haag
+	variables := map[string]interface{}{
+		"cityId": graphql.Int(29246),
+	}
+
+	graphQL := graphql.NewClient("https://www.al-yaqeen.com/wp/graphql", nil)
+	err = graphQL.Query(context.Background(), &query, variables)
 	if err != nil {
-		return "", err
+		fmt.Println(err)
 	}
 
-	defer cur.Close(ctx)
+	for _, item := range query.GetPrayerTimesV2.Times {
 
-	for cur.Next(ctx) {
+		prayer := make(map[string]interface{})
 
-		var result City
-		err := cur.Decode(&result)
-		if err != nil {
-			return "", err
-		}
+		date, _ := time.Parse("2 1 2006", fmt.Sprintf("%d %d %d", item.Day, item.Month, item.Year))
+		day := date.Format("02-01-2006")
 
-		cities = append(cities, result)
-	}
+		prayer["Fajr"] = item.Fadjr
+		prayer["Sunrise"] = item.Shoeroeq
+		prayer["Dhuhr"] = item.Dhoehr
+		prayer["Asr"] = item.Asr
+		prayer["Maghrib"] = item.Maghrib
+		prayer["Isha"] = item.Ishaa
+		prayer["Date"] = day
+		prayer["City"] = "Den Haag"
 
-	if err := cur.Err(); err != nil {
-		return "", err
-	}
+		update := bson.D{{
+			"$set", prayer,
+		}}
 
-	log.Println(len(cities))
+		filter := bson.D{{"Date", day}}
+		opts := options.Update().SetUpsert(true)
 
-	re := regexp.MustCompile("\\d\\d:\\d\\d")
-
-	for _, city := range cities {
-
-		count, err := prayerCollection.CountDocuments(ctx, bson.M{
-			"City": city.Name,
-			"Date": now.Format("02-01-2006"),
-		})
-
-		//log.Println("I have", count, "documents for", city.Name)
+		_, err = prayerCollection.UpdateOne(ctx, filter, update, opts)
 
 		if err != nil {
 			return "", err
-		}
-
-		if count > 0 {
-			log.Println("skipping")
-			continue
-		}
-
-		url := `http://api.aladhan.com/v1/calendarByCity?city={{.City}}&country={{.Country}}&timezonestring=Europe%2FAmsterdam&method=2&month={{.Month}}&year={{.Year}}`
-		url = strings.Replace(url, "{{.City}}", strings.Replace(city.Name, " ", "%20", 1), 1)
-		url = strings.Replace(url, "{{.Country}}", city.Country, 1)
-		url = strings.Replace(url, "{{.Month}}", now.Format("1"), 1)
-		url = strings.Replace(url, "{{.Year}}", now.Format("2006"), 1)
-
-		res, err := http.Get(url)
-
-		if err != nil {
-			return "", err
-		}
-
-		json, err := ioutil.ReadAll(res.Body)
-		res.Body.Close()
-
-		value := gjson.GetBytes(json, "data")
-
-		for _, item := range value.Array() {
-
-			prayer := make(map[string]interface{})
-
-			date, _ := time.Parse("02 Jan 2006", item.Get("date.readable").String())
-
-			prayer["Fajr"] = re.FindString(item.Get("timings.Fajr").String())
-			prayer["Sunrise"] = re.FindString(item.Get("timings.Sunrise").String())
-			prayer["Dhuhr"] = re.FindString(item.Get("timings.Dhuhr").String())
-			prayer["Asr"] = re.FindString(item.Get("timings.Asr").String())
-			prayer["Maghrib"] = re.FindString(item.Get("timings.Maghrib").String())
-			prayer["Isha"] = re.FindString(item.Get("timings.Isha").String())
-			prayer["Midnight"] = re.FindString(item.Get("timings.Midnight").String())
-			prayer["Date"] = date.Format("02-01-2006")
-			prayer["City"] = city.Name
-
-			_, err = prayerCollection.InsertOne(ctx, prayer)
-
-			if err != nil {
-				return "", err
-			}
 		}
 	}
 
@@ -139,10 +98,10 @@ func HandleRequest(ctx context.Context) (string, error) {
 }
 
 func main() {
-	lambda.Start(HandleRequest)
+	runtime.Start(handleRequest)
 
 	// ctx := context.TODO()
-	// result, err := HandleRequest(ctx)
+	// result, err := handleRequest(ctx)
 
-	// log.Println(result, err)
+	// fmt.Println(result, err)
 }
