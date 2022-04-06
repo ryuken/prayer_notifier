@@ -1,44 +1,48 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
-	"strings"
+	// "strconv"
+	// "strings"
+	"time"
 )
 
-func ConvertTo24(time string) string {
+func ConvertTo24(cTime string) string {
 
-	format := time[len(time)-2:]
+	t, _ := time.Parse("3:04", cTime)
 
-	result := strings.Split(time[:5], ":")
+	return t.Format("15:04")
 
-	first, _ := strconv.ParseInt(result[0], 10, 8)
-	second, _ := strconv.ParseInt(result[1], 10, 8)
+	// format := time[len(time)-2:]
 
-	if "am" == format {
+	// result := strings.Split(time[:5], ":")
 
-		if first < 10 {
-			result[0] = "0" + result[0]
-		}
+	// first, _ := strconv.ParseInt(result[0], 10, 8)
+	// second, _ := strconv.ParseInt(result[1], 10, 8)
 
-		if second < 10 && len(result[1]) < 2 {
-			result[1] = "0" + result[1]
-		}
+	// if "am" == format {
 
-	} else if "pm" == format {
+	// 	if first < 10 {
+	// 		result[0] = "0" + result[0]
+	// 	}
 
-		if first < 12 {
-			result[0] = strconv.FormatInt(12+first, 10)
-		}
+	// 	if second < 10 && len(result[1]) < 2 {
+	// 		result[1] = "0" + result[1]
+	// 	}
 
-		if result[0] == "24" {
-			result[0] = "00"
-		}
+	// } else if "pm" == format {
 
-		if second < 10 && len(result[1]) < 2 {
-			result[1] = "0" + result[1]
-		}
-	}
+	// 	if first < 12 {
+	// 		result[0] = strconv.FormatInt(12+first, 10)
+	// 	}
 
-	return strings.TrimSpace(fmt.Sprintf("%s:%s", result[0], result[1]))
+	// 	if result[0] == "24" {
+	// 		result[0] = "00"
+	// 	}
+
+	// 	if second < 10 && len(result[1]) < 2 {
+	// 		result[1] = "0" + result[1]
+	// 	}
+	// }
+
+	// return strings.TrimSpace(fmt.Sprintf("%s:%s", result[0], result[1]))
 }

@@ -89,7 +89,7 @@ func play(player, action, id string) {
 // stop playing
 func stop() error {
 
-	cmd := exec.Command("mpc", "stop")
+	cmd := exec.Command("python3", "/root/pychromecast-10.2.3/stop.py")
 	err := cmd.Start()
 
 	if err != nil {

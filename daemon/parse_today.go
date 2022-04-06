@@ -34,6 +34,8 @@ func ParseToday() {
 		if v.Date == now.Format("02-01-2006") {
 
 			today = v
+			today.Fajr = ConvertTo24(today.Fajr)
+			today.Sunrise = ConvertTo24(today.Sunrise)
 
 			break
 		}
