@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.active {
+    color: darkgreen;
+}
+
+.inactive {
+    color: darkred;
+}
+
+.highlight {
+    font-weight: bold;
+    background-color:rgba(0,255,0,0.4);
+}
