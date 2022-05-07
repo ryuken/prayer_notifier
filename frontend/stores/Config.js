@@ -8,6 +8,7 @@ export default class Config {
 
     @observable Id = "";
     @observable City = "";
+    @observable MPD = "";
     @observable Enabled = [];
 
     constructor() {

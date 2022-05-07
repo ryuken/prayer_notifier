@@ -19,6 +19,6 @@ print(cast.cast_info)
 
 mc = cast.media_controller
 
-mc.play_media('http://192.168.8.7/' + sys.argv[1], 'audio/mp3')
+mc.play_media('http://192.168.1.7/' + sys.argv[1], 'audio/mp3')
 mc.block_until_active()
 print(mc.status)

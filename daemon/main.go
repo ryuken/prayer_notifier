@@ -86,6 +86,7 @@ func program(state overseer.State) {
 	daemon.AddFunc("@daily", ParseToday)
 	daemon.AddFunc("@every 12h", loadToday)
 	daemon.AddFunc("@every 1m", check)
+	daemon.AddFunc("@every 30m", getReminders)
 	daemon.Start()
 
 	c := cors.New(cors.Options{
@@ -103,9 +104,11 @@ func program(state overseer.State) {
 	ht.Get("/today", alice.New(c.Handler).Then(http.HandlerFunc(todayRead)))
 	ht.Get("/nextPrayer", alice.New(c.Handler).Then(tools.AppHandler(nextPrayer)))
 
-	ht.Get("/config", alice.New(c.Handler).Then(http.HandlerFunc(configRead)))
+	ht.Get("/config", alice.New(c.Handler).Then(tools.AppHandler(configRead)))
 	//ht.Post("/config", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)), nil)
 	ht.Get("/configu", alice.New(c.Handler).Then(tools.AppHandler(configUpdate)))
+
+	ht.Get("/reminders", alice.New(c.Handler).Then(http.HandlerFunc(remindersRead)))
 
 	ht.Get("/stop", alice.New(c.Handler).Then(tools.AppHandler(stopHTTP)))
 

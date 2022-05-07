@@ -60,12 +60,12 @@ const Menu = ({ stores }) => {
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">
                                 <NavLink to="/">Home</NavLink>
-                                <NavLink to="/prayers">Gebedstijden</NavLink>
-                                <NavLink to="/settings">Instellingen</NavLink>
+                                <NavLink to="/prayers.html">Gebedstijden</NavLink>
+                                <NavLink to="/settings.html">Instellingen</NavLink>
                                 <NavLink onClick={refresh}>
                                     <FontAwesomeIcon icon={faArrowsRotate} />
                                 </NavLink>
-                                <NavLink to="/clock">
+                                <NavLink to="/clock.html">
                                     <FontAwesomeIcon icon={faTimer} />
                                 </NavLink>
                             </div>

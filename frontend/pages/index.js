@@ -93,24 +93,14 @@ const Home = ({ stores }) => {
                                 ></button>
                             </div> */}
                             <div className="carousel-inner relative w-full overflow-hidden">
-                                <div className="carousel-item active float-left w-full">
-                                    <p className="text-gray-700 text-base my-4">
-                                        This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-                                    </p>
-                                    <p className="text-gray-600 text-xs">Last updated 3 mins ago</p>
-                                </div>
-                                <div className="carousel-item float-left w-full">
-                                    <p className="text-gray-700 text-base my-4">
-                                        This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-                                    </p>
-                                    <p className="text-gray-600 text-xs">Last updated 5 mins ago</p>
-                                </div>
-                                <div className="carousel-item float-left w-full">
-                                    <p className="text-gray-700 text-base my-4">
-                                        This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-                                    </p>
-                                    <p className="text-gray-600 text-xs">Last updated 13 mins ago</p>
-                                </div>
+                                {stores.reminders.items.map((item, index) => (
+                                    <div key={item._id} className={clx("carousel-item relative float-left w-full", { "active" : index === 0 })}>
+                                        <p className="text-gray-700 text-base my-4">
+                                            {item.content}
+                                        </p>
+                                        <p className="text-gray-600 text-xs">{item.source}</p>
+                                    </div>
+                                ))}
                             </div>
                             <button
                                 className="carousel-control-prev absolute top-0 bottom-0 flex items-center justify-center p-0 text-center border-0 hover:outline-none hover:no-underline focus:outline-none focus:no-underline left-0"

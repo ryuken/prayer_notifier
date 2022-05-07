@@ -1,60 +1,14 @@
-#! /bin/sh
-
 # this file needs to be put into /etc/init.d/prayer
 
-### BEGIN INIT INFO
-# Provides:          prayer
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Prayer notifier
-# Description:       This file should be used to construct scripts to be
-#                    placed in /etc/init.d.
-### END INIT INFO
+[Unit]
+Description=Prayer Service
+After=multi-user.target
 
-# Author: Taushif Habiboellah <taushif.habiboellah@gmail.com>
+[Service]
+User=root
+ExecStart=/home/pi/prayer_notifier/daemon
+Restart=always
+WorkingDirectory=/home/pi/prayer_notifier
 
-# Do NOT "set -e"
-
-
-# PATH should only include /usr/* if it runs after the mountnfs.sh script
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DESC="Prayer notifier service"
-NAME=prayer
-WORK_DIR=/home/pi/prayer_notifier/
-DAEMON=/home/pi/prayer_notifier/daemon
-DAEMON_OPTS=
-PIDFILE=/home/pi/prayer_notifier/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
-
-# Define LSB log_* functions.
-# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
-# and status_of_proc is working.
-. /lib/lsb/init-functions
-
-
-case "$1" in
-start)
-		echo -n "Starting daemon: "$NAME
-		start-stop-daemon --start --quiet -b --pidfile $PIDFILE --make-pidfile -d $WORK_DIR --exec $DAEMON -- $DAEMON_OPTS
-		echo "."
-		;;
-	stop)
-		echo -n "Stopping daemon: "$NAME
-		start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
-		echo "."
-		;;
-	restart)
-		echo -n "Restarting daemon: "$NAME
-		start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
-		start-stop-daemon --start --quiet -b --pidfile $PIDFILE --make-pidfile -d $WORK_DIR --exec $DAEMON -- $DAEMON_OPTS
-		echo "."
-		;;
-
-	*)
-		echo "Usage: "$1" {start|stop|restart}"
-		exit 1
-esac
-
-exit 0
+[Install]
+WantedBy=multi-user.target

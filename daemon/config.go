@@ -4,47 +4,37 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
-func configRead(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "config.json")
+func configRead(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
+
+	type Data struct {
+		Id      string
+		City    string
+		MPD     bool
+		Enabled []string
+	}
+
+	var data Data
+
+	content, err := ioutil.ReadFile("config.json")
+
+	err = json.Unmarshal(content, &data)
+
+	if err != nil {
+		return "json", nil, err
+	}
+
+	return "json", data, err
 }
-
-// func configUpdate(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
-
-// 	decoder := json.NewDecoder(r.Body)
-
-// 	type Post struct {
-// 		Id 		string
-// 		City 	string
-// 		Enabled []string
-// 	}
-
-// 	var post Post
-
-// 	err := decoder.Decode(&post)
-// 	if err != nil {
-// 		return "json", nil, err
-// 	}
-
-// 	js, err := json.Marshal(post)
-// 	if err != nil {
-// 		return "json", nil, err
-// 	}
-
-// 	err = ioutil.WriteFile("config.json", js, 0644)
-// 	if err != nil {
-// 		return "json", nil, err
-// 	}
-
-// 	return "json", post, err
-// }
 
 func configUpdate(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
 
 	type Post struct {
-		Id 		string
-		City 	string
+		Id      string
+		City    string
+		MPD     bool
 		Enabled []string
 	}
 
@@ -52,11 +42,12 @@ func configUpdate(w http.ResponseWriter, r *http.Request) (string, interface{}, 
 
 	r.ParseForm()
 
-	filters, _ := r.Form["Enabled"]
-
 	post.Id = r.URL.Query().Get("Id")
 	post.City = r.URL.Query().Get("City")
-	post.Enabled = filters
+	post.Enabled = r.Form["Enabled"]
+
+	mpd, err := strconv.ParseBool(r.URL.Query().Get("MPD"))
+	post.MPD = mpd
 
 	js, err := json.Marshal(post)
 	if err != nil {

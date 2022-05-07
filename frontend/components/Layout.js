@@ -21,6 +21,7 @@ const Layout = ({ children, stores }) => {
 
         stores.prayers.fetch()
         stores.config.fetch()
+        stores.reminders.fetch()
 
         changeBackground()
 
