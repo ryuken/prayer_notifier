@@ -7,6 +7,7 @@ import (
 	"time"
 
 	runtime "github.com/aws/aws-lambda-go/lambda"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -30,7 +31,7 @@ var query struct {
 	} `graphql:"getPrayerTimesV2(id: $cityId)"`
 }
 
-func handleRequest(ctx context.Context) (string, error) {
+func handleRequest(ctx context.Context) (data string, err error) {
 
 	// Set client options
 	clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
@@ -38,15 +39,28 @@ func handleRequest(ctx context.Context) (string, error) {
 	// Connect to MongoDB
 	client, err := mongo.Connect(ctx, clientOptions)
 
+	defer func() {
+
+		if r := recover(); r != nil {
+			data = ""
+			err = r.(error)
+		}
+
+		if client != nil {
+			fmt.Println("Closing connection...")
+			client.Disconnect(ctx)
+		}
+	}()
+
 	if err != nil {
-		return "", err
+		panic(err)
 	}
 
 	// Check the connection
 	err = client.Ping(ctx, nil)
 
 	if err != nil {
-		return "", err
+		panic(err)
 	}
 
 	fmt.Println("Connected to MongoDB!")
@@ -61,7 +75,7 @@ func handleRequest(ctx context.Context) (string, error) {
 	graphQL := graphql.NewClient("https://www.al-yaqeen.com/wp/graphql", nil)
 	err = graphQL.Query(context.Background(), &query, variables)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	for _, item := range query.GetPrayerTimesV2.Times {
@@ -90,18 +104,18 @@ func handleRequest(ctx context.Context) (string, error) {
 		_, err = prayerCollection.UpdateOne(ctx, filter, update, opts)
 
 		if err != nil {
-			return "", err
+			panic(err)
 		}
 	}
 
-	return "finished", err
+	return
 }
 
 func main() {
 	runtime.Start(handleRequest)
 
+	// fmt.Println("Start")
 	// ctx := context.TODO()
 	// result, err := handleRequest(ctx)
-
 	// fmt.Println(result, err)
 }

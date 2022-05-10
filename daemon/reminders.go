@@ -26,17 +26,27 @@ func getReminders() {
 	// Connect to MongoDB
 	client, err := mongo.Connect(ctx, clientOptions)
 
+	defer func() {
+
+		if r := recover(); r != nil {
+			err = r.(error)
+			fmt.Println(err)
+		}
+
+		if client != nil {
+			client.Disconnect(ctx)
+		}
+	}()
+
 	if err != nil {
-		//fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	// Check the connection
 	err = client.Ping(ctx, nil)
 
 	if err != nil {
-		//fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	//fmt.Println("Connected to MongoDB!")
@@ -46,15 +56,13 @@ func getReminders() {
 	cursor, err := collection.Find(ctx, bson.M{})
 
 	if err != nil {
-		//fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	var reminders []bson.M
 
 	if err = cursor.All(ctx, &reminders); err != nil {
-		//fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	js, _ := bson.MarshalJSON(reminders)
@@ -62,8 +70,7 @@ func getReminders() {
 	err = ioutil.WriteFile("reminders.json", js, 0644)
 
 	if err != nil {
-		//fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	fmt.Println("Saved reminders")
