@@ -25,7 +25,7 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Fajr" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "azan12.mp3")
+				play("azan12.mp3")
 				break
 			}
 		}
@@ -34,7 +34,7 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Sunrise" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "bleep.mp3")
+				play("bleep.mp3")
 				break
 			}
 		}
@@ -43,7 +43,7 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Dhuhr" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "azan12.mp3")
+				play("azan12.mp3")
 				break
 			}
 		}
@@ -52,7 +52,7 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Asr" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "azan12.mp3")
+				play("azan12.mp3")
 				break
 			}
 		}
@@ -61,7 +61,7 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Maghrib" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "azan12.mp3")
+				play("azan12.mp3")
 				break
 			}
 		}
@@ -70,16 +70,16 @@ func check() {
 
 		for _, prayer := range enabled {
 			if "Isha" == prayer {
-				play("python3", "/home/pi/pychromecast/play.py", "azan12.mp3")
+				play("azan12.mp3")
 				break
 			}
 		}
 	}
 }
 
-func play(player, action, id string) {
+func play(audio string) {
 
-	cmd := exec.Command(player, action, id)
+	cmd := exec.Command("python3", "/home/pi/pychromecast/play.py", getIp(), audio)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
