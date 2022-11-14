@@ -12,8 +12,8 @@
 @sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium Default/Preferences
 
 # Pick which browser you'll use
-# @chromium-browser --noerrdialogs --use-gl=egl http://islamdevice.muslimconnected.nl.s3-website.eu-central-1.amazonaws.com/ --incognito --disable-translate
-# @firefox-esr -kiosk --private-window http://islamdevice.muslimconnected.nl.s3-website.eu-central-1.amazonaws.com/
+# @chromium-browser --noerrdialogs --use-gl=egl https://s3.eu-central-1.amazonaws.com/islamdevice.muslimconnected.nl/ --incognito --disable-translate
+# @firefox-esr -kiosk --private-window https://s3.eu-central-1.amazonaws.com/islamdevice.muslimconnected.nl/
 
 # xautomation is needed for the bash scripts
 @/bin/sh /home/pi/prayer_notifier/fullscreen.sh
