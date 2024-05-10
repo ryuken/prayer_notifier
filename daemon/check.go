@@ -79,7 +79,7 @@ func check() {
 
 func play(audio string) {
 
-	cmd := exec.Command("python3", "/home/pi/pychromecast/play.py", getIp(), audio)
+	cmd := exec.Command("python3", "~/prayer_notifier/daemon/scripts/play.py", getIp(), audio)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -89,7 +89,7 @@ func play(audio string) {
 // stop playing
 func stop() error {
 
-	cmd := exec.Command("python3", "/home/pi/pychromecast/stop.py")
+	cmd := exec.Command("python3", "~/prayer_notifier/daemon/scripts/stop.py")
 	err := cmd.Start()
 
 	if err != nil {
