@@ -1,43 +1,35 @@
 /**
  * Created by taushif on 26/02/2017.
  */
-import {makeObservable, observable, runInAction, action} from 'mobx'
+import { signal } from "@preact/signals-react"
 
-export default class Reminders {
+export const errors = signal(0)
+export const items = signal([])
 
-    @observable errors = 0;
-    @observable items = [];
+export const fetchReminders = (toast) => {
 
-	constructor() {
-        makeObservable(this)
-    }
+	if(errors.value < 3) {
 
-    @action fetch() {
+		fetch('http://localhost:3000/reminders?timestamp=' + new Date().getTime())
+			.then(response => response.json())
+			.then(json => {
 
-		if(this.errors < 3) {
-
-			fetch('http://localhost:3000/reminders?timestamp=' + new Date().getTime())
-				.then(response => response.json())
-				.then(json => {
-
-					runInAction(() => {
-						this.errors = 0
-
-						this.items = json
-					})
+				errors.value = 0
+				items.value = json
+			})
+			.catch(err => {
+				
+				errors.value++
+				
+				toast({
+					variant: "destructive",
+					title: "Error",
+					description: "Kon reminders niet ophalen."
 				})
-				.catch(err => {
-					
-					runInAction(() => {
-						this.errors++
-					})
-
-					alert("error, kon reminders niet ophalen")
-				})
-		}
-    }
-
-	@action resetErrors() {
-		this.errors = 0
+			})
 	}
+}
+
+export const resetErrors = () => {
+	errors.value = 0
 }

@@ -1,68 +1,58 @@
 /**
  * Created by taushif on 26/02/2017.
  */
-import {makeObservable, observable, runInAction, action} from 'mobx'
+import { signal } from "@preact/signals-react"
 
-export default class Prayers {
+export const errors = signal(0)
+export const items = signal([])
+export const nextPrayer = signal("")
 
-    @observable errors = 0;
-    @observable items = [];
-    @observable nextPrayer = ""
+export const fetchPrayers = (toast) => {
 
-	constructor() {
-        makeObservable(this)
-    }
+	if(errors.value < 3) {
 
-    @action fetch() {
+		fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
+			.then(response => response.json())
+			.then(json => {
+				errors.value = 0
+				items.value = json
+			})
+			.catch(err => {
+				
+				errors.value++
 
-		if(this.errors < 3) {
-
-			fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
-				.then(response => response.json())
-				.then(json => {
-
-					runInAction(() => {
-						this.errors = 0
-
-						this.items = json
-					})
+				toast({
+					title: "Error",
+					description: "Kon gebedstijden niet ophalen.",
+					variant: "destructive"
 				})
-				.catch(err => {
-					
-					runInAction(() => {
-						this.errors++
-					})
-
-					alert("error, kon gebedstijden niet ophalen")
-				})
-		}
-    }
-
-    @action fetchNext() {
-
-		if(this.errors < 3) {
-
-			fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
-				.then(response => response.json())
-				.then(json => {
-
-					runInAction(() => {
-						this.errors = 0
-						this.nextPrayer = json.prayer
-					})
-				})
-				.catch(err => {
-					
-					runInAction(() => {
-						this.errors++
-					})
-					
-					alert( "error, kon volgend gebed niet ophalen" )
-				})
-		}
-    }
-
-	@action resetErrors() {
-		this.errors = 0
+			})
 	}
+}
+
+export const fetchNext = (toast) => {
+
+	if(errors.value < 3) {
+
+		fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
+			.then(response => response.json())
+			.then(json => {
+				errors.value = 0
+				nextPrayer.value = json.prayer
+			})
+			.catch(err => {
+				
+				errors.value++
+				
+				toast({
+					title: "Error",
+					description: "Kon volgend gebed niet ophalen.",
+					variant: "destructive"
+				})
+			})
+	}
+}
+
+export const resetErrors = () => {
+	errors.value = 0
 }

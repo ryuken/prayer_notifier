@@ -1,18 +1,18 @@
+"use client"
 /**
  * Created by taushif on 08/01/2017.
  */
 import React from 'react'
 
-import { useRouter } from 'next/router'
-import { inject, observer } from 'mobx-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import 'tw-elements'
+//import 'tw-elements'
 import clx from 'classnames'
-
 import screenfull from "screenfull"
+import { RefreshCw, Timer, CloudOff, Maximize2 } from "lucide-react"
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowsRotate, faTimer, faArrowsMaximize, faCloudExclamation } from "@fortawesome/pro-regular-svg-icons"
+import { errors, resetErrors } from "../stores/Prayers"
 
 const NavLink = ({ children, to = "#", onClick }) => {
 
@@ -21,7 +21,7 @@ const NavLink = ({ children, to = "#", onClick }) => {
     const isActive = router.route === to
 
     return (
-        <a
+        <Link
             href={to}
             onClick={onClick}
             className={clx("px-3 py-2 rounded-md text-sm font-medium", {
@@ -30,11 +30,11 @@ const NavLink = ({ children, to = "#", onClick }) => {
             })}
         >
             {children}
-        </a>
+        </Link>
     )
 }
 
-const Menu = ({ stores }) => {
+const Menu = ({ }) => {
 
     const toggleSF = () => {
         
@@ -60,27 +60,27 @@ const Menu = ({ stores }) => {
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">
                                 <NavLink to="/">Home</NavLink>
-                                <NavLink to="/prayers.html">Gebedstijden</NavLink>
-                                <NavLink to="/settings.html">Instellingen</NavLink>
+                                <NavLink to="/prayers">Gebedstijden</NavLink>
+                                <NavLink to="/settings">Instellingen</NavLink>
                                 <NavLink onClick={refresh}>
-                                    <FontAwesomeIcon icon={faArrowsRotate} />
+                                    <RefreshCw className="inline-block" />
                                 </NavLink>
-                                <NavLink to="/clock.html">
-                                    <FontAwesomeIcon icon={faTimer} />
+                                <NavLink to="/clock">
+                                    <Timer className="inline-block" />
                                 </NavLink>
                             </div>
                         </div>
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-4 flex items-center md:ml-6">
-                            {stores.prayers.errors === 3 && (
-                                 <button
+                            {errors.value >= 3 && (
+                                <button
                                     type="button"
-                                    onClick={stores.prayers.resetErrors}
+                                    onClick={resetErrors}
                                     className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                                 >
                                     <span className="sr-only">View fullscreen</span>
-                                    <FontAwesomeIcon icon={faCloudExclamation} />
+                                    <CloudOff />
                                 </button>
                             )}
 
@@ -88,7 +88,7 @@ const Menu = ({ stores }) => {
                                 <div>
                                     <button type="button" onClick={toggleSF} className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                         <span className="sr-only">View fullscreen</span>
-                                        <FontAwesomeIcon icon={faArrowsMaximize} />
+                                        <Maximize2 />
                                     </button>
                                 </div>
                             </div>
@@ -100,4 +100,4 @@ const Menu = ({ stores }) => {
     )
 }
 
-export default inject("stores")(observer(Menu))
+export default Menu

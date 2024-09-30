@@ -2,66 +2,64 @@
  * Created by taushif on 26/02/2017.
  */
 import qs from "qs"
-import {makeObservable, observable, runInAction, action} from 'mobx'
 
-export default class Config {
+import { signal } from "@preact/signals-react"
 
-    @observable Id = "";
-    @observable City = "";
-    @observable MPD = "";
-    @observable Enabled = [];
+export const Id = signal("");
+export const City = signal("");
+export const MPD = signal("");
+export const Enabled = signal([]);
 
-    constructor() {
-        makeObservable(this)
-    }
+export const fetchConfig = (toast) => {
 
-    @action fetch() {
-
-        fetch('http://localhost:3000/config?timestamp=' + new Date().getTime())
-            .then(response => response.json())
-            .then(json => {
-
-                runInAction(() => {
-                    this.Id = json.Id
-                    this.City = json.City
-                    this.Enabled = json.Enabled
-                })
-            })
-            .catch(err => {
-                alert( "error, kon instellingen niet ophalen" )
-            })
-    }
-
-    @action update() {
-
-        const data = { Id: this.Id, City: this.City }
-
-        let queryString = qs.stringify(data)
-
-        this.Enabled.forEach(prayer => {
-            queryString += "&Enabled=" + prayer
+    fetch('http://localhost:3000/config?timestamp=' + new Date().getTime())
+        .then(response => response.json())
+        .then(json => {
+            Id.value = json.Id
+            City.value = json.City
+            Enabled.value = json.Enabled
         })
-
-        fetch(`http://localhost:3000/configu?${queryString}`)
-            .then(response => response.json())
-            .then(json => {
-                this.fetch()
+        .catch(err => {
+            toast({
+                title: "Error",
+                description: "Kon instellingen niet ophalen.",
+                variant: "destructive"
             })
-            .catch(err => {
-                console.log(err)
-                alert( "error, kon instellingen niet bijwerken" )
+        })
+}
+
+export const update = (toast) => {
+
+    const data = { Id: Id.value, City: City.value }
+
+    let queryString = qs.stringify(data)
+
+    Enabled.value.forEach(prayer => {
+        queryString += "&Enabled=" + prayer
+    })
+
+    fetch(`http://localhost:3000/configu?${queryString}`)
+        .then(response => response.json())
+        .then(json => {
+            fetchConfig(toast)
+        })
+        .catch(err => {
+            toast({
+                title: "Error",
+                description: "Kon instellingen niet bijwerken.",
+                variant: "destructive"
             })
-    }
+        })
+}
 
-    @action brightness(amount = 100) {
-        fetch('http://localhost:3000/brightness?amount=' + amount)
-    }
+export const brightness = (amount = 100) => {
+    fetch('http://localhost:3000/brightness?amount=' + amount)
+}
 
-    @action fullscreen() {
-        fetch('http://localhost:3000/fullscreen')
-    }
+export const fullscreen = () => {
+    fetch('http://localhost:3000/fullscreen')
+}
 
-    @action stop() {
-        fetch('http://localhost:3000/stop')
-    }
+export const stop = () => {
+    fetch('http://localhost:3000/stop')
 }

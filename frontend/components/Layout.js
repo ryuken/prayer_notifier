@@ -1,11 +1,18 @@
+"use client"
+
 import React, { useEffect, useState } from 'react'
 
-import { inject, observer } from 'mobx-react'
+import { useToast } from "@/hooks/use-toast"
 
-import dynamic from 'next/dynamic'
-const Menu = dynamic(() => import("./Menu"), { ssr: false })
+import Menu from "./Menu"
 
-const Layout = ({ children, stores }) => {
+import { fetchPrayers, fetchNext } from "../stores/Prayers"
+import { fetchReminders } from "../stores/Reminders"
+import { fetchConfig } from "../stores/Config"
+
+const Layout = ({ children }) => {
+
+    const { toast } = useToast()
 
     const [state, setState] = useState({
         poller : null,
@@ -19,19 +26,21 @@ const Layout = ({ children, stores }) => {
 
     useEffect(() => {
 
-        stores.prayers.fetch()
-        stores.config.fetch()
-        stores.reminders.fetch()
+        fetchPrayers(toast)
+        fetchNext(toast)
+        fetchReminders(toast)
+        fetchConfig(toast)
 
         changeBackground()
 
         setState({
             poller : setInterval(() => {
-                stores.prayers.fetchNext()
+                fetchNext(toast)
             }, 1000)
         })
 
-        // FIXME clearInterval(this.state.poller)
+        return () => clearInterval(state.poller)
+        
     }, [])
 
     const changeBackground = () => {
@@ -58,4 +67,4 @@ const Layout = ({ children, stores }) => {
     )
 }
 
-export default inject("stores")(observer(Layout))
+export default Layout
