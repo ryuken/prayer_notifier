@@ -80,12 +80,14 @@ func program(state overseer.State) {
 	refresh()
 
 	//fmt.Println(Today)
+	checkInternetConnection()
 
 	daemon := cron.New()
 	daemon.AddFunc("@every 24h", refresh)
 	daemon.AddFunc("@daily", ParseToday)
 	daemon.AddFunc("@every 12h", loadToday)
 	daemon.AddFunc("@every 1m", check)
+	daemon.AddFunc("@every 5m", checkInternetConnection)
 	daemon.AddFunc("@every 30m", getReminders)
 	daemon.Start()
 
