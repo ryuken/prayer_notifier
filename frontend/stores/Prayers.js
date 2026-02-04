@@ -2,14 +2,15 @@
  * Created by taushif on 26/02/2017.
  */
 import { signal } from "@preact/signals-react"
+import { toast } from "sonner"
 
 export const errors = signal(0)
 export const items = signal([])
 export const nextPrayer = signal("")
 
-export const fetchPrayers = (toast) => {
+export const fetchPrayers = () => {
 
-	if(errors.value < 3) {
+	if (errors.value < 3) {
 
 		fetch('http://localhost:3000/today?timestamp=' + new Date().getTime())
 			.then(response => response.json())
@@ -18,21 +19,17 @@ export const fetchPrayers = (toast) => {
 				items.value = json
 			})
 			.catch(err => {
-				
+
 				errors.value++
 
-				toast({
-					title: "Error",
-					description: "Kon gebedstijden niet ophalen.",
-					variant: "destructive"
-				})
+				toast.error("Error - Kon gebedstijden niet ophalen.", { position: "bottom-right" })
 			})
 	}
 }
 
-export const fetchNext = (toast) => {
+export const fetchNext = () => {
 
-	if(errors.value < 3) {
+	if (errors.value < 3) {
 
 		fetch('http://localhost:3000/nextPrayer?timestamp=' + new Date().getTime())
 			.then(response => response.json())
@@ -41,14 +38,10 @@ export const fetchNext = (toast) => {
 				nextPrayer.value = json.prayer
 			})
 			.catch(err => {
-				
+
 				errors.value++
-				
-				toast({
-					title: "Error",
-					description: "Kon volgend gebed niet ophalen.",
-					variant: "destructive"
-				})
+
+				toast.error("Error - Kon volgend gebed niet ophalen.", { position: "bottom-right" })
 			})
 	}
 }

@@ -37,7 +37,7 @@ const NavLink = ({ children, to = "#", onClick }) => {
 const Menu = ({ }) => {
 
     const toggleSF = () => {
-        
+
         if (screenfull.isEnabled) {
             screenfull.toggle();
         }
@@ -54,8 +54,8 @@ const Menu = ({ }) => {
             <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <img className="h-8 w-8" src="/img/icon.png" alt="Logo" />
+                        <div className="shrink-0">
+                            <img className="h-8 w-8" src="img/icon.png" alt="Logo" />
                         </div>
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">

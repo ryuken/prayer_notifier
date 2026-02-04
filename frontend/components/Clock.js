@@ -2,15 +2,12 @@
 
 import { useState, useEffect } from 'react'
 
-import { useToast } from "@/hooks/use-toast"
-
 import { fetchPrayers } from "../stores/Prayers"
 
 import { getDateTime } from "../getTime"
 
 const Clock = () => {
 
-    const { toast } = useToast()
     const [clock, setClock] = useState(null)
     const [now, setNow] = useState(getDateTime())
 
@@ -24,7 +21,7 @@ const Clock = () => {
 
         // get prayer times every 10 minutes
         let prayers = setInterval(() => {
-            fetchPrayers(toast)
+            fetchPrayers()
         }, 600000)
 
         return () => {

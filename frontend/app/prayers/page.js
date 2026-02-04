@@ -2,7 +2,6 @@
 
 import React, { Suspense } from 'react'
 
-import { useToast } from "@/hooks/use-toast"
 import Clock from "@/components/Clock"
 
 import { nextPrayer, items as prayers } from "@/stores/Prayers"
@@ -14,28 +13,26 @@ import { Circle, CircleCheck } from "lucide-react"
 
 const Prayer = ({ item }) => {
 
-    const { toast } = useToast()
-
     let highlight = false
     let active = false
 
-    if(item === nextPrayer.value)
+    if (item === nextPrayer.value)
         highlight = true
 
-    if(!("undefined" !== typeof Enabled.value && -1 === Enabled.value.indexOf(item)))
+    if (!("undefined" !== typeof Enabled.value && -1 === Enabled.value.indexOf(item)))
         active = true
 
     // TODO move update logic to store
     const togglePrayer = (prayer) => {
 
-        if("undefined" !== typeof Enabled.value && false === Enabled.value.includes(prayer)) {
+        if ("undefined" !== typeof Enabled.value && false === Enabled.value.includes(prayer)) {
             Enabled.value.push(prayer)
         }
         else {
             Enabled.value.splice(Enabled.value.indexOf(prayer), 1)
         }
 
-        update(toast)
+        update()
     }
 
     return (

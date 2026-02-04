@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useToast } from "@/hooks/use-toast"
-
 import Menu from "./Menu"
 
 import { fetchPrayers, fetchNext } from "../stores/Prayers"
@@ -12,11 +10,9 @@ import { fetchConfig } from "../stores/Config"
 
 const Layout = ({ children }) => {
 
-    const { toast } = useToast()
-
     const [state, setState] = useState({
-        poller : null,
-        backgrounds : [
+        poller: null,
+        backgrounds: [
             'img/backgrounds/islamic_wallpaper_2.jpg',
             'img/backgrounds/islamic_wallpaper_3.jpg',
             'img/backgrounds/islamic_wallpaper_10.jpg',
@@ -26,28 +22,28 @@ const Layout = ({ children }) => {
 
     useEffect(() => {
 
-        fetchPrayers(toast)
-        fetchNext(toast)
-        fetchReminders(toast)
-        fetchConfig(toast)
+        fetchPrayers()
+        fetchNext()
+        fetchReminders()
+        fetchConfig()
 
         changeBackground()
 
         setState({
-            poller : setInterval(() => {
-                fetchNext(toast)
+            poller: setInterval(() => {
+                fetchNext()
             }, 1000)
         })
 
         return () => clearInterval(state.poller)
-        
+
     }, [])
 
     const changeBackground = () => {
 
         const { backgrounds } = state
 
-        if(window.screen.width >= 800) {
+        if (window.screen.width >= 800) {
 
             const randomIndex = Math.floor(Math.random() * (backgrounds.length - 1))
 

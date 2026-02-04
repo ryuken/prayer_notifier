@@ -2,7 +2,6 @@
 
 import React, { Suspense } from 'react'
 
-import { useToast } from "@/hooks/use-toast"
 import Button, { ButtonGroup } from "@/components/Button"
 
 import { fetchPrayers } from "@/stores/Prayers"
@@ -13,7 +12,6 @@ import clx from "classnames"
 import { Circle, CircleCheck } from "lucide-react"
 
 const Settings = () => {
-
 
     const setCity = (e) => {
 
@@ -42,7 +40,7 @@ const Settings = () => {
                     </ListGroup>    
                 </div>
                 */}
-            
+
                 <div className='p-3'>
                     <h3>Brightness</h3>
 

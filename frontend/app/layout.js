@@ -1,7 +1,6 @@
 import '../styles/globals.css'
 
-//import stores from '../stores'
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/sonner"
 
 import Layout from '../components/Layout'
 

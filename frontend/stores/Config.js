@@ -4,13 +4,14 @@
 import qs from "qs"
 
 import { signal } from "@preact/signals-react"
+import { toast } from "sonner"
 
 export const Id = signal("");
 export const City = signal("");
 export const MPD = signal("");
 export const Enabled = signal([]);
 
-export const fetchConfig = (toast) => {
+export const fetchConfig = () => {
 
     fetch('http://localhost:3000/config?timestamp=' + new Date().getTime())
         .then(response => response.json())
@@ -20,15 +21,11 @@ export const fetchConfig = (toast) => {
             Enabled.value = json.Enabled
         })
         .catch(err => {
-            toast({
-                title: "Error",
-                description: "Kon instellingen niet ophalen.",
-                variant: "destructive"
-            })
+            toast.error("Error - Kon instellingen niet ophalen.", { position: "bottom-right" })
         })
 }
 
-export const update = (toast) => {
+export const update = () => {
 
     const data = { Id: Id.value, City: City.value }
 
@@ -40,15 +37,9 @@ export const update = (toast) => {
 
     fetch(`http://localhost:3000/configu?${queryString}`)
         .then(response => response.json())
-        .then(json => {
-            fetchConfig(toast)
-        })
+        .then(json => fetchConfig)
         .catch(err => {
-            toast({
-                title: "Error",
-                description: "Kon instellingen niet bijwerken.",
-                variant: "destructive"
-            })
+            toast.error("Error - Kon instellingen niet bijwerken.", { position: "bottom-right" })
         })
 }
 

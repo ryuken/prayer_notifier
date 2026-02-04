@@ -1,7 +1,6 @@
 "use client"
 import React, { Suspense } from 'react'
 
-import clx from "classnames"
 import { MapPin, StopCircle, Quote } from "lucide-react"
 
 import {
@@ -19,12 +18,12 @@ import { items as prayers, nextPrayer } from "@/stores/Prayers"
 import { items as reminders } from "@/stores/Reminders"
 import { City, stop } from "@/stores/Config"
 
-const Home = ({ }) => {
+const Home = () => {
 
     return (
         <div className="flex justify-center">
             <div className="flex flex-col mt-6 md:flex-row md:max-w-xl rounded-lg bg-white  bg-opacity-80 shadow-lg">
-                
+
                 <div className="p-6 flex justify-center w-full h-96 md:h-auto object-cover md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg">
                     <div className='self-center flex-col text-center'>
                         <h1 className="text-xl font-large">
@@ -49,7 +48,7 @@ const Home = ({ }) => {
 
                     <div className='p-3 flex flex-col justify-center'>
                         <Quote className='mr-2' />
-                        
+
                         <Carousel
                             className="w-full max-w-sm"
                             opts={{ align: 'start', loop: true }}
@@ -68,7 +67,7 @@ const Home = ({ }) => {
                             <CarouselNext />
                             <CarouselPrevious />
                         </Carousel>
-                        
+
                     </div>
                 </div>
 

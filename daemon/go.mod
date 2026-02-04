@@ -6,6 +6,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/jpillora/overseer v1.1.6
 	github.com/justinas/alice v1.2.0
+	github.com/prometheus-community/pro-bing v0.7.0
 	github.com/robfig/cron v1.2.0
 	github.com/rs/cors v1.8.3
 	github.com/ryuken/th_tools v0.1.1
@@ -37,7 +38,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
-	github.com/prometheus-community/pro-bing v0.7.0 // indirect
 	github.com/spf13/afero v1.9.4 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
