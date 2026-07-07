@@ -55,7 +55,7 @@ const Menu = ({ }) => {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                         <div className="shrink-0">
-                            <img className="h-8 w-8" src="img/icon.png" alt="Logo" />
+                            <img className="h-8 w-8" src="img/icon.svg" alt="Logo" />
                         </div>
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">

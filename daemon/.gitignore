@@ -1,3 +1,5 @@
 node_modules
 prayer_notifier
 daemon
+today.json
+city.json
