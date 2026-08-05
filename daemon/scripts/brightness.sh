@@ -1,3 +1,3 @@
 #!/bin/bash
 amount=$1
-echo $amount > /sys/class/backlight/rpi_backlight/brightness
+echo $amount > /sys/class/backlight/11-0045/brightness
