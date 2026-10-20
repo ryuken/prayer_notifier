@@ -16,7 +16,7 @@ func check() {
 	t := time.Now()
 	currentTime := t.Format(clock)
 
-	fmt.Println("Current time", currentTime)
+	// fmt.Println("Current time", currentTime)
 
 	enabled := viper.GetStringSlice("Enabled")
 
@@ -77,19 +77,20 @@ func check() {
 	}
 }
 
-func play(audio string) {
+func play(audio string) error {
 
-	cmd := exec.Command("python3", "~/prayer_notifier/daemon/scripts/play.py", getIp(), audio)
-	err := cmd.Run()
+	cmd := exec.Command("python3", "./daemon/scripts/play.py", "--url", "http://" + getIp() + "/" + audio)
+	err := cmd.Start()
 	if err != nil {
 		fmt.Println(err)
 	}
+	return err
 }
 
 // stop playing
 func stop() error {
 
-	cmd := exec.Command("python3", "~/prayer_notifier/daemon/scripts/stop.py")
+	cmd := exec.Command("python3", "./daemon/scripts/stop.py")
 	err := cmd.Start()
 
 	if err != nil {
@@ -102,6 +103,13 @@ func stop() error {
 func stopHTTP(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
 
 	err := stop()
+
+	return "json", err == nil, err
+}
+
+func testPlayHTTP(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
+
+	err := play("azan12.mp3")
 
 	return "json", err == nil, err
 }
