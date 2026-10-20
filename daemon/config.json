@@ -1,1 +1,1 @@
-{"Id":"","City":"Den Haag","Enabled":["Maghrib","Asr","Dhuhr","Sunrise","Isha"]}
+{"Id":"","City":"Den Haag","MPD":false,"Enabled":["Dhuhr","Sunrise","Isha","Fajr"]}

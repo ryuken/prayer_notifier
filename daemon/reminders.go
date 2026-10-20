@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/spf13/viper"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/mgo.v2/bson"
 )
 
 func remindersRead(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +66,7 @@ func getReminders() {
 		panic(err)
 	}
 
-	js, _ := bson.MarshalJSON(reminders)
+	js, _ := json.Marshal(reminders)
 
 	err = ioutil.WriteFile("reminders.json", js, 0644)
 
