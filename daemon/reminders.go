@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	"github.com/spf13/viper"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func remindersRead(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +25,7 @@ func getReminders() {
 	clientOptions := options.Client().ApplyURI(viper.GetString("MONGODB_URI"))
 
 	// Connect to MongoDB
-	client, err := mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(clientOptions)
 
 	defer func() {
 
